@@ -1,7 +1,8 @@
 /**
  * AERO Hospital Search Service
- * Uses OpenStreetMap Nominatim + Overpass API to find real emergency
+ * Uses Google Places API (New) via proxy to find real emergency
  * hospitals near a given GPS coordinate within a specified radius.
+ * Falls back to OpenStreetMap Overpass if Google fails.
  */
 
 export interface LiveHospital {
@@ -13,10 +14,12 @@ export interface LiveHospital {
   phone?: string;
   distanceMeters: number;
   distanceLabel: string;
-  /** OSM amenity tag */
+  /** Primary classification */
   type: 'hospital' | 'clinic' | 'doctors';
-  /** Overpass element id */
-  osmId: number;
+  /** External place identifier */
+  osmId?: number;
+  googleMapsUri?: string;
+  businessStatus?: string;
 }
 
 function haversine(lat1: number, lng1: number, lat2: number, lng2: number): number {
@@ -35,8 +38,8 @@ function distLabel(meters: number): string {
 }
 
 /**
- * Search for real hospitals near `pos` within `radiusMeters` using Overpass API.
- * Falls back to Nominatim text search if Overpass is slow.
+ * Search for real hospitals near `pos` within `radiusMeters` using Google Places API (via backend proxy).
+ * Falls back to Overpass API if the proxy fails.
  */
 export async function searchNearbyHospitals(
   pos: [number, number],
@@ -45,9 +48,63 @@ export async function searchNearbyHospitals(
 ): Promise<LiveHospital[]> {
   const [lat, lng] = pos;
 
-  // Overpass QL query — hospitals & clinics with emergency capability
+  // 1. Try Google Places API Proxy
+  try {
+    console.log(`[AERO HOSPITAL] Querying Google Places API proxy for hospitals...`);
+    // Need auth token for backend proxy
+    const session = JSON.parse(localStorage.getItem('sb-yozhchqmslptfysuoxbw-auth-token') || '{}');
+    const token = session?.access_token || '';
+
+    const res = await fetch('http://localhost:3001/api/places/hospitals', {
+      method: 'POST',
+      signal,
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ latitude: lat, longitude: lng, radius: radiusMeters })
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const places = data.places || [];
+      console.log(`[AERO HOSPITAL] Google Places returned ${places.length} results.`);
+      
+      const hospitals: LiveHospital[] = places.map((place: any) => {
+        const pLat = place.location?.latitude;
+        const pLng = place.location?.longitude;
+        const dist = pLat && pLng ? haversine(lat, lng, pLat, pLng) : 0;
+        
+        return {
+          id: place.id,
+          name: place.displayName?.text || 'Unnamed Hospital',
+          lat: pLat || lat,
+          lng: pLng || lng,
+          address: place.formattedAddress || '',
+          distanceMeters: dist,
+          distanceLabel: distLabel(dist),
+          type: 'hospital',
+          googleMapsUri: place.googleMapsUri,
+          businessStatus: place.businessStatus
+        };
+      }).sort((a: any, b: any) => a.distanceMeters - b.distanceMeters);
+
+      if (hospitals.length > 0) {
+        return hospitals;
+      }
+    } else {
+      const errorText = await res.text();
+      console.warn(`[AERO HOSPITAL] Google Places Proxy failed: HTTP ${res.status} - ${errorText}`);
+    }
+  } catch (err: any) {
+    if (err.name === 'AbortError' && signal?.aborted) throw err;
+    console.warn(`[AERO HOSPITAL] Google Places Proxy request error: ${err.message}`);
+  }
+
+  // 2. Fallback to OpenStreetMap Overpass if Google failed
+  console.log(`[AERO HOSPITAL] Falling back to OpenStreetMap Overpass...`);
   const query = `
-[out:json][timeout:10];
+[out:json][timeout:15];
 (
   node["amenity"="hospital"](around:${radiusMeters},${lat},${lng});
   way["amenity"="hospital"](around:${radiusMeters},${lat},${lng});
@@ -56,40 +113,62 @@ export async function searchNearbyHospitals(
 out center tags;
 `.trim();
 
-  const res = await fetch('https://overpass-api.de/api/interpreter', {
-    method: 'POST',
-    body: query,
-    signal,
-    headers: { 'Content-Type': 'text/plain' },
-  });
+  const endpoints = [
+    'https://overpass-api.de/api/interpreter',
+    'https://lz4.overpass-api.de/api/interpreter',
+    'https://z.overpass-api.de/api/interpreter'
+  ];
 
-  if (!res.ok) throw new Error('Overpass error');
+  let data = null;
 
-  const data = await res.json();
+  for (const endpoint of endpoints) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); 
+      const combinedSignal = signal ? (signal.aborted ? signal : controller.signal) : controller.signal;
+
+      if (signal && !signal.aborted) {
+        signal.addEventListener('abort', () => controller.abort());
+      }
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        body: query,
+        signal: combinedSignal,
+        headers: { 'Content-Type': 'text/plain' },
+      });
+
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        data = await res.json();
+        break; 
+      }
+    } catch (err: any) {
+      if (err.name === 'AbortError' && signal?.aborted) throw err;
+    }
+  }
+
+  if (!data || !data.elements) {
+    console.error('[AERO HOSPITAL] All hospital discovery methods failed. Returning empty list.');
+    return []; // STRICT REQUIREMENT: NO FALLBACK/MOCK ARRAYS.
+  }
+
   const elements: any[] = data.elements || [];
-
+  
   const hospitals: LiveHospital[] = elements
     .map((el: any) => {
       const elLat = el.lat ?? el.center?.lat;
       const elLng = el.lon ?? el.center?.lon;
       if (!elLat || !elLng) return null;
 
-      const name: string =
-        el.tags?.name ||
-        el.tags?.['name:en'] ||
-        el.tags?.['operator'] ||
-        'Hospital';
-
+      const name: string = el.tags?.name || el.tags?.['name:en'] || el.tags?.['operator'] || 'Unnamed Hospital';
       const dist = haversine(lat, lng, elLat, elLng);
       if (dist > radiusMeters) return null;
 
-      const addr = [
-        el.tags?.['addr:housename'],
-        el.tags?.['addr:street'],
-        el.tags?.['addr:city'],
-      ]
+      const addr = [el.tags?.['addr:housename'], el.tags?.['addr:street'], el.tags?.['addr:city']]
         .filter(Boolean)
-        .join(', ') || el.tags?.['addr:full'] || '';
+        .join(', ') || el.tags?.['addr:full'] || 'Address unavailable';
 
       return {
         id: `osm-${el.type}-${el.id}`,
@@ -97,7 +176,7 @@ out center tags;
         lat: elLat,
         lng: elLng,
         address: addr,
-        phone: el.tags?.phone || el.tags?.['contact:phone'],
+        phone: el.tags?.phone || el.tags?.['contact:phone'] || 'Phone unavailable',
         distanceMeters: dist,
         distanceLabel: distLabel(dist),
         type: (el.tags?.amenity || 'hospital') as LiveHospital['type'],
@@ -120,7 +199,7 @@ export async function searchHospitalsByName(
   signal?: AbortSignal,
 ): Promise<LiveHospital[]> {
   const [lat, lng] = pos;
-  const delta = 0.15; // ~15 km bounding box
+  const delta = 0.15; 
   const params = new URLSearchParams({
     q: query,
     format: 'json',
@@ -131,29 +210,37 @@ export async function searchHospitalsByName(
     bounded: '1',
   });
 
-  const res = await fetch(`https://nominatim.openstreetmap.org/search?${params}`, {
-    signal,
-    headers: { 'Accept-Language': 'en', 'User-Agent': 'AERO-Emergency/2.0' },
-  });
+  try {
+    const res = await fetch(`https://nominatim.openstreetmap.org/search?${params}`, {
+      signal,
+      headers: { 'Accept-Language': 'en', 'User-Agent': 'AERO-Emergency/2.0' },
+    });
 
-  if (!res.ok) return [];
-  const data: any[] = await res.json();
+    if (res.ok) {
+      const data: any[] = await res.json();
+      return data
+        .filter(r => r.class === 'amenity' && (r.type === 'hospital' || r.type === 'clinic' || r.type === 'doctors'))
+        .map(r => {
+          const dist = haversine(lat, lng, parseFloat(r.lat), parseFloat(r.lon));
+          return {
+            id: `nom-${r.place_id}`,
+            name: r.display_name.split(',')[0],
+            lat: parseFloat(r.lat),
+            lng: parseFloat(r.lon),
+            address: r.display_name,
+            distanceMeters: dist,
+            distanceLabel: distLabel(dist),
+            type: r.type as LiveHospital['type'],
+            osmId: r.osm_id,
+          } as LiveHospital;
+        })
+        .sort((a, b) => a!.distanceMeters - b!.distanceMeters);
+    }
+  } catch (err: any) {
+    if (err.name === 'AbortError') throw err;
+    console.error('[AERO HOSPITAL] Nominatim search failed.');
+  }
 
-  return data
-    .filter(r => r.class === 'amenity' && (r.type === 'hospital' || r.type === 'clinic' || r.type === 'doctors'))
-    .map(r => {
-      const dist = haversine(lat, lng, parseFloat(r.lat), parseFloat(r.lon));
-      return {
-        id: `nom-${r.place_id}`,
-        name: r.display_name.split(',')[0],
-        lat: parseFloat(r.lat),
-        lng: parseFloat(r.lon),
-        address: r.display_name,
-        distanceMeters: dist,
-        distanceLabel: distLabel(dist),
-        type: r.type as LiveHospital['type'],
-        osmId: r.osm_id,
-      } as LiveHospital;
-    })
-    .sort((a, b) => a!.distanceMeters - b!.distanceMeters);
+  // STRICT REQUIREMENT: NO FALLBACK/MOCK ARRAY.
+  return [];
 }

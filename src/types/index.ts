@@ -77,6 +77,37 @@ export interface Emergency {
   completedAt?: string;
 }
 
+// ── Supabase Database Types ──
+export type CorridorStatus = 'PENDING' | 'CLEARING' | 'CLEAR' | 'CAUTION' | 'BLOCKED';
+
+export interface EmergencyIncident {
+  id: string;
+  user_id: string;
+  incident_type: string;
+  priority: string;
+  status: string;
+  ambulance_id?: string;
+  latitude: number;
+  longitude: number;
+  destination_hospital: string;
+  destination_latitude: number;
+  destination_longitude: number;
+  route_geometry?: any;
+  route_distance_meters?: number;
+  route_duration_seconds?: number;
+  current_latitude?: number;
+  current_longitude?: number;
+  current_accuracy?: number;
+  current_speed?: number;
+  current_heading?: number;
+  corridor_status?: CorridorStatus;
+  police_acknowledged_at?: string;
+  police_id?: string;
+  resolved_at?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 // ── Hospital ──
 export interface Hospital {
   id: string;

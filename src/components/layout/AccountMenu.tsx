@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import type { UserRole } from '../../types';
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 
 interface AccountMenuProps {
   userName: string;
@@ -9,6 +11,8 @@ interface AccountMenuProps {
 export function AccountMenu({ userName, userRole }: AccountMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -20,9 +24,9 @@ export function AccountMenu({ userName, userRole }: AccountMenuProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('aero_auth_user');
-    window.location.href = '/login';
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/login', { replace: true });
   };
 
   return (
@@ -49,12 +53,18 @@ export function AccountMenu({ userName, userRole }: AccountMenuProps) {
             <p className="text-[11px] text-navy-400 mt-0.5">{userRole}</p>
           </div>
           
-          <button className="w-full text-left px-4 py-2 text-sm text-navy-200 hover:bg-navy-800 hover:text-white transition-colors flex items-center gap-2">
+          <button 
+            onClick={() => { setIsOpen(false); navigate('/settings/account'); }}
+            className="w-full text-left px-4 py-2 text-sm text-navy-200 hover:bg-navy-800 hover:text-white transition-colors flex items-center gap-2 cursor-pointer"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             Account Settings
           </button>
           
-          <button className="w-full text-left px-4 py-2 text-sm text-navy-200 hover:bg-navy-800 hover:text-white transition-colors flex items-center gap-2">
+          <button 
+            onClick={() => { setIsOpen(false); navigate('/settings/security'); }}
+            className="w-full text-left px-4 py-2 text-sm text-navy-200 hover:bg-navy-800 hover:text-white transition-colors flex items-center gap-2 cursor-pointer"
+          >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
             Security & Privacy
           </button>
@@ -63,7 +73,7 @@ export function AccountMenu({ userName, userRole }: AccountMenuProps) {
           
           <button 
             onClick={handleLogout}
-            className="w-full text-left px-4 py-2 text-sm text-emergency-400 hover:bg-emergency-900/50 transition-colors flex items-center gap-2"
+            className="w-full text-left px-4 py-2 text-sm text-emergency-400 hover:bg-emergency-900/50 transition-colors flex items-center gap-2 cursor-pointer"
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
             Sign Out

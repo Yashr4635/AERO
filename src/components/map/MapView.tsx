@@ -169,7 +169,7 @@ export function MapView({
   const [showLegend, setShowLegend] = useState(false);
 
   return (
-    <div className={`relative w-full h-full min-h-[300px] bg-gray-50 overflow-hidden ${className}`}>
+    <div className={`relative w-full h-full min-h-[300px] bg-navy-950 overflow-hidden ${className}`}>
       <MapContainer
         center={center}
         zoom={zoom}
@@ -177,10 +177,18 @@ export function MapView({
         zoomControl={false}
         attributionControl={false}
       >
-        <TileLayer
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        />
+        {import.meta.env.VITE_MAP_ACCESS_TOKEN ? (
+          <TileLayer
+            url={`https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/tiles/256/{z}/{x}/{y}@2x?access_token=${import.meta.env.VITE_MAP_ACCESS_TOKEN}`}
+            attribution='&copy; <a href="https://www.mapbox.com/">Mapbox</a>'
+            maxZoom={20}
+          />
+        ) : (
+          <TileLayer
+            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+          />
+        )}
 
         {/* Auto-center map when center prop changes */}
         <MapAutoCenter center={center} />

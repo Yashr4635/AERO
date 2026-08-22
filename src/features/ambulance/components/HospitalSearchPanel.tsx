@@ -200,7 +200,7 @@ export function HospitalSearchPanel({
                 {loading ? 'Searching live map data…' : `${hospitals.length} hospitals within ${maxRadiusKm} km`}
               </span>
               {!loading && hospitals.length > 0 && (
-                <span className="text-[10px] text-blue-500 font-medium">📡 OpenStreetMap Live</span>
+                <span className="text-[10px] text-blue-500 font-medium">📡 Live Map Data</span>
               )}
             </div>
 
@@ -218,43 +218,56 @@ export function HospitalSearchPanel({
                 const distKm = h.distanceMeters / 1000;
                 const urgencyColor = distKm < 3 ? 'text-emerald-600' : distKm < 8 ? 'text-amber-600' : 'text-blue-600';
                 return (
-                  <button
-                    key={h.id}
-                    onClick={() => handleSelect(h)}
-                    className={`w-full text-left px-3 py-2.5 flex items-start gap-2.5 hover:bg-blue-50 transition-colors cursor-pointer border-b border-gray-50 last:border-0 ${
-                      isSelected ? 'bg-emerald-50 border-emerald-100' : ''
-                    }`}
-                  >
-                    {/* Rank badge */}
-                    <div className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                      i === 0 ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-500'
-                    }`}>
-                      {i === 0 ? '★' : i + 1}
-                    </div>
-
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-1">
-                        <p className={`text-xs font-bold leading-tight truncate ${isSelected ? 'text-emerald-700' : 'text-gray-800'}`}>
-                          {h.name}
-                        </p>
-                        <span className={`text-[11px] font-mono font-bold shrink-0 ${urgencyColor}`}>
-                          {h.distanceLabel}
-                        </span>
+                  <div key={h.id} className="flex flex-col border-b border-gray-50 last:border-0">
+                    <button
+                      onClick={() => handleSelect(h)}
+                      className={`w-full text-left px-3 py-2.5 flex items-start gap-2.5 hover:bg-blue-50 transition-colors cursor-pointer ${
+                        isSelected ? 'bg-emerald-50 border-emerald-100' : ''
+                      }`}
+                    >
+                      {/* Rank badge */}
+                      <div className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                        i === 0 ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-500'
+                      }`}>
+                        {i === 0 ? '★' : i + 1}
                       </div>
-                      {h.address && (
-                        <p className="text-[10px] text-gray-400 mt-0.5 leading-tight truncate">{h.address}</p>
-                      )}
-                      {h.phone && (
-                        <p className="text-[10px] text-blue-500 mt-0.5 font-mono">{h.phone}</p>
-                      )}
-                    </div>
 
-                    {isSelected && (
-                      <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                      </svg>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-1">
+                          <p className={`text-xs font-bold leading-tight truncate ${isSelected ? 'text-emerald-700' : 'text-gray-800'}`}>
+                            {h.name}
+                          </p>
+                          <span className={`text-[11px] font-mono font-bold shrink-0 ${urgencyColor}`}>
+                            {h.distanceLabel}
+                          </span>
+                        </div>
+                        {h.address && (
+                          <p className="text-[10px] text-gray-400 mt-0.5 leading-tight truncate">{h.address}</p>
+                        )}
+                        {h.businessStatus && (
+                          <p className={`text-[10px] mt-0.5 font-bold ${h.businessStatus === 'OPERATIONAL' ? 'text-emerald-500' : 'text-amber-500'}`}>
+                            {h.businessStatus.replace('_', ' ')}
+                          </p>
+                        )}
+                        {h.phone && (
+                          <p className="text-[10px] text-blue-500 mt-0.5 font-mono">{h.phone}</p>
+                        )}
+                      </div>
+
+                      {isSelected && (
+                        <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+                        </svg>
+                      )}
+                    </button>
+                    {h.googleMapsUri && (
+                      <div className="px-3 pb-2 pt-1 flex justify-end">
+                         <a href={h.googleMapsUri} target="_blank" rel="noreferrer" className="text-[10px] font-bold text-blue-500 hover:text-blue-600 underline">
+                           [ OPEN IN GOOGLE MAPS ]
+                         </a>
+                      </div>
                     )}
-                  </button>
+                  </div>
                 );
               })}
             </div>

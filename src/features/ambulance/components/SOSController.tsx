@@ -95,39 +95,54 @@ export function SOSController({
         open={state === 'CONFIRMING' || state === 'COUNTDOWN'}
         onClose={state === 'CONFIRMING' ? handleCancel : () => {}}
         onConfirm={state === 'CONFIRMING' ? handleConfirm : undefined}
-        title={state === 'CONFIRMING' ? 'Confirm Emergency SOS' : 'Initiating SOS Corridor'}
+        title={state === 'CONFIRMING' ? 'EMERGENCY CONFIRMATION' : 'Initiating SOS Corridor'}
         variant="emergency"
-        confirmLabel="CONFIRM SOS"
+        confirmLabel="CONFIRM EMERGENCY"
         cancelLabel={state === 'COUNTDOWN' ? 'CANCEL (Aborting)' : 'Cancel'}
       >
         <div className="space-y-4">
           <p className="text-sm text-navy-200">
             {state === 'COUNTDOWN'
               ? 'Computing live OSRM route & broadcasting green-wave to police…'
-              : 'You are about to notify traffic police and hospital ER of an active emergency trip.'}
+              : 'Please review the emergency details before raising the SOS.'}
           </p>
 
-          <div className="bg-navy-900 border border-navy-700 rounded-xl p-3 text-xs space-y-2">
-            <div className="flex justify-between">
-              <span className="text-navy-400">Unit ID</span>
-              <span className="font-bold text-navy-100">{ambulanceId}</span>
+          <div className="bg-navy-900 border border-navy-700 rounded-xl p-3 text-xs space-y-3">
+            <div className="flex flex-col">
+              <span className="text-navy-400 uppercase tracking-widest text-[10px]">Emergency:</span>
+              <span className="font-bold text-white text-sm">{patientData?.category || 'General'}</span>
             </div>
-            <div className="flex justify-between">
-              <span className="text-navy-400">Destination</span>
-              <span className="font-bold text-emerald-400 truncate ml-2 text-right max-w-[200px]">{hospital.name}</span>
+            
+            <div className="flex flex-col">
+              <span className="text-navy-400 uppercase tracking-widest text-[10px]">Priority:</span>
+              <span className="font-bold text-red-400 text-sm">{patientData?.priority || 'Critical'}</span>
             </div>
-            {distLabel && (
-              <div className="flex justify-between">
-                <span className="text-navy-400">Distance</span>
-                <span className="font-bold text-cyan-300">{distLabel}</span>
+
+            <div className="flex flex-col">
+              <span className="text-navy-400 uppercase tracking-widest text-[10px]">Current Location:</span>
+              <span className="font-bold text-cyan-300 font-mono text-xs">{currentPos ? `${currentPos[0].toFixed(5)}, ${currentPos[1].toFixed(5)}` : 'LIVE GPS'}</span>
+            </div>
+
+            <div className="flex flex-col">
+              <span className="text-navy-400 uppercase tracking-widest text-[10px]">Destination:</span>
+              <span className="font-bold text-emerald-400 text-sm">{hospital.name}</span>
+            </div>
+
+            <div className="flex flex-col">
+              <span className="text-navy-400 uppercase tracking-widest text-[10px]">Route:</span>
+              <span className="font-bold text-navy-100 text-xs">OSRM Computed Route</span>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="flex flex-col">
+                <span className="text-navy-400 uppercase tracking-widest text-[10px]">Distance:</span>
+                <span className="font-bold text-white text-sm">{distLabel}</span>
               </div>
-            )}
-            {currentPos && (
-              <div className="flex justify-between font-mono">
-                <span className="text-navy-400">Origin GPS</span>
-                <span className="text-cyan-300">{currentPos[0].toFixed(4)}, {currentPos[1].toFixed(4)}</span>
+              <div className="flex flex-col">
+                <span className="text-navy-400 uppercase tracking-widest text-[10px]">Estimated Travel Time:</span>
+                <span className="font-bold text-white text-sm">{(hospital as any).drivingEtaSeconds ? Math.round((hospital as any).drivingEtaSeconds/60) : '--'} min</span>
               </div>
-            )}
+            </div>
           </div>
 
           {state === 'COUNTDOWN' && (

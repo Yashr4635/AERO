@@ -39,17 +39,9 @@ export const policeService = {
     return realtimeService.getAllEmergencies().find(e => e.id === id);
   },
 
-  async acceptEmergency(emergencyId: string, policeId: string) {
+  async acceptEmergency(emergencyId: string, _policeId: string) {
     await delay(300);
-    const officer = mockPoliceUnits.find(p => p.id === policeId) || mockPoliceUnits[0];
-    realtimeService.updateEmergencyStatus(emergencyId, 'ACCEPTED', {
-      acceptedBy: {
-        id: officer.id,
-        displayName: officer.name,
-        badgeNumber: officer.badgeNumber,
-        station: officer.station,
-      },
-    });
+    realtimeService.updateEmergencyStatus(emergencyId, 'ACCEPTED');
     return { success: true };
   },
 

@@ -1,4 +1,5 @@
 import { mockAmbulances } from '../mock';
+import { supabase } from '../lib/supabase';
 import { realtimeService } from './realtimeService';
 import { routingService } from './routingService';
 import type { Emergency, Hospital, PatientInfo, TrafficIncident } from '../types';
@@ -31,7 +32,7 @@ export const ambulanceService = {
     ]);
 
     const newEmergency: Emergency = {
-      id: `EMG-${Math.floor(1000 + Math.random() * 9000)}`,
+      id: `EMG-${Math.floor(1000 + Math.random() * 9000)}`, // Local ID for UI logic temporarily
       status: 'ACTIVE',
       priority: patientData?.priority || 'CODE_RED',
       category: patientData?.category || 'CARDIAC',
@@ -77,7 +78,45 @@ export const ambulanceService = {
       },
     };
 
-    realtimeService.triggerEmergency(newEmergency);
+    // Supabase Persistence
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('User not authenticated');
+
+    const priorityMapping: Record<string, string> = {
+      'CODE_RED': 'critical',
+      'CODE_YELLOW': 'high',
+      'CODE_GREEN': 'medium',
+    };
+    const pgPriority = priorityMapping[newEmergency.priority as string] || 'critical';
+    
+    const { data, error } = await supabase.from('emergency_incidents').insert({
+      user_id: user.id,
+      incident_type: newEmergency.category,
+      priority: pgPriority,
+      status: 'active',
+      ambulance_id: newEmergency.ambulanceId,
+      latitude: startPos[0],
+      longitude: startPos[1],
+      destination_hospital: hospital.name,
+      destination_latitude: hospital.location.latitude,
+      destination_longitude: hospital.location.longitude,
+      eta_minutes: Math.round(routeInfo.etaSeconds / 60),
+      route_geometry: routeInfo.polyline,
+      route_distance_meters: routeInfo.distanceMeters,
+      route_duration_seconds: routeInfo.etaSeconds,
+      current_latitude: startPos[0],
+      current_longitude: startPos[1],
+      current_speed: 0,
+      description: newEmergency.patient?.chiefComplaint || 'Emergency Request'
+    }).select().single();
+    
+    if (error || !data) {
+      console.error('Supabase insert failed:', error);
+      throw new Error(`Failed to create emergency incident: ${error?.message}`);
+    }
+
+    // Map the real DB ID back
+    newEmergency.id = data.id;
     return newEmergency;
   },
 

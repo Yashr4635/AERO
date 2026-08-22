@@ -8,7 +8,7 @@ export interface ChatMessage {
 }
 
 export const aiService = {
-  async sendMessage(messages: { role: string; content: string }[], incidentContext?: string): Promise<string> {
+  async sendMessage(message: string, conversationId: string | null, incidentContext?: string): Promise<{ reply: string, conversationId: string }> {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error('Not authenticated');
 
@@ -18,7 +18,7 @@ export const aiService = {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${session.access_token}`
       },
-      body: JSON.stringify({ messages, incidentContext })
+      body: JSON.stringify({ message, conversationId, incidentContext })
     });
 
     if (!response.ok) {
@@ -27,7 +27,10 @@ export const aiService = {
     }
 
     const data = await response.json();
-    return data.reply;
+    return {
+      reply: data.message.content,
+      conversationId: data.conversationId
+    };
   },
 
   async loadConversations() {
@@ -36,20 +39,6 @@ export const aiService = {
       .select('*')
       .order('created_at', { ascending: false });
     
-    if (error) throw error;
-    return data;
-  },
-
-  async createConversation(title: string) {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
-
-    const { data, error } = await supabase
-      .from('ai_conversations')
-      .insert({ title, user_id: user.id })
-      .select()
-      .single();
-
     if (error) throw error;
     return data;
   },
@@ -65,22 +54,21 @@ export const aiService = {
     return data;
   },
 
-  async saveMessage(conversationId: string, role: string, content: string) {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('Not authenticated');
-
-    const { data, error } = await supabase
-      .from('ai_messages')
-      .insert({
-        conversation_id: conversationId,
-        user_id: user.id,
-        role,
-        content
-      })
-      .select()
-      .single();
-      
+  async deleteConversation(conversationId: string) {
+    const { error } = await supabase
+      .from('ai_conversations')
+      .delete()
+      .eq('id', conversationId);
+    
     if (error) throw error;
-    return data;
+  },
+
+  async renameConversation(conversationId: string, title: string) {
+    const { error } = await supabase
+      .from('ai_conversations')
+      .update({ title })
+      .eq('id', conversationId);
+    
+    if (error) throw error;
   }
 };

@@ -59,6 +59,7 @@ export function RegisterPage({ onRegister }: RegisterPageProps) {
         email: formData.email,
         password: formData.password,
         options: {
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
           data: {
             full_name: formData.fullName,
             role: formData.role.toLowerCase(), // ambulance_operator, etc handled later or just generic
@@ -77,9 +78,10 @@ export function RegisterPage({ onRegister }: RegisterPageProps) {
         addToast({
           variant: 'success',
           title: 'Registration Initiated',
-          message: `Verification code sent to ${formData.email}`,
+          message: `Confirmation email sent to ${formData.email}. Please check your inbox and click the link to verify.`,
         });
-        navigate('/verify-email');
+        // We stay on the page or redirect to login. Redirect to login is usually best.
+        navigate('/login');
       }
     } catch (err: any) {
       setError(err.message || 'Registration failed');

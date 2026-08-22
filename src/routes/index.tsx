@@ -5,7 +5,9 @@ import { supabase } from '../lib/supabase';
 import { LandingPage } from '../features/public/pages/LandingPage';
 import { LoginPage } from '../features/auth/pages/LoginPage';
 import { RegisterPage } from '../features/auth/pages/RegisterPage';
-import { VerifyEmailPage } from '../features/auth/pages/VerifyEmailPage';
+import { AuthCallbackPage } from '../features/auth/pages/AuthCallbackPage';
+import { AccountSettingsPage } from '../features/settings/pages/AccountSettingsPage';
+import { SecurityPrivacyPage } from '../features/settings/pages/SecurityPrivacyPage';
 
 import { AmbulanceDashboard } from '../features/ambulance/pages/AmbulanceDashboard';
 import { PoliceDashboard } from '../features/police/pages/PoliceDashboard';
@@ -23,14 +25,14 @@ export function AppRoutes() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: any) => {
       setSession(session);
       setLoading(false);
     });
 
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
       setSession(session);
     });
 
@@ -94,10 +96,7 @@ export function AppRoutes() {
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
       <Route path="/register" element={<RegisterPage onRegister={handleLogin} />} />
-      <Route
-        path="/verify-email"
-        element={<VerifyEmailPage />}
-      />
+      <Route path="/auth/callback" element={<AuthCallbackPage />} />
       <Route path="/showcase" element={<ComponentShowcase />} />
 
       {/* Ambulance Routes */}
@@ -184,6 +183,24 @@ export function AppRoutes() {
         element={
           <ProtectedRoute allowedRoles={['ADMIN']}>
             <AdminDashboard />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* Settings Routes */}
+      <Route
+        path="/settings/account"
+        element={
+          <ProtectedRoute>
+            <AccountSettingsPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/settings/security"
+        element={
+          <ProtectedRoute>
+            <SecurityPrivacyPage />
           </ProtectedRoute>
         }
       />
