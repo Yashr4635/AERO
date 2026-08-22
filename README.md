@@ -23,27 +23,6 @@ Real-time emergency coordination between ambulances and traffic-response personn
 
 <br>
 
-## 🖼️ Product Interface
-
-<table align="center" width="100%">
-  <tr>
-    <td align="center" width="50%"><b>🚑 Ambulance Dashboard</b></td>
-    <td align="center" width="50%"><b>👮 Police Dashboard</b></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="./src/assets/hero.png" alt="Ambulance Dashboard" /></td>
-    <td align="center"><i>Screenshot coming soon</i></td>
-  </tr>
-  <tr>
-    <td align="center" width="50%"><b>🛡️ Admin Overview</b></td>
-    <td align="center" width="50%"><b>🤖 AERO AI Assistant</b></td>
-  </tr>
-  <tr>
-    <td align="center"><i>Screenshot coming soon</i></td>
-    <td align="center"><i>Screenshot coming soon</i></td>
-  </tr>
-</table>
-
 ---
 
 ## 💡 What is LIFELANE?
