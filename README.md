@@ -214,47 +214,30 @@ flowchart LR
 
 ## 💻 Tech Stack
 
-### Frontend
-| Technology | Purpose |
-| --- | --- |
-| React 19 | UI Components |
-| Vite 8 | Build tooling |
-| TypeScript | Type safety |
-| Tailwind CSS v4 | Styling and Design System |
-
-### Maps & Location
-| Technology | Purpose |
-| --- | --- |
-| Leaflet | Interactive mapping engine |
-| React-Leaflet | React integration for Leaflet |
-| OpenStreetMap | Open-source map tile data |
-| Browser Geolocation API | Live device GPS |
-
-### Backend & Data
-| Technology | Purpose |
-| --- | --- |
-| Node.js | Server runtime environment |
-| Express.js | Secure API proxy layer |
-| Supabase | Managed backend platform |
-| PostgreSQL | Core relational database |
-| Supabase Auth | User authentication (JWT) |
-| Supabase RLS | Authorization and row-level security |
-| Supabase Realtime | Real-time WebSocket synchronization |
-
-### External Services
-| Technology | Purpose |
-| --- | --- |
-| Google Places API | Real-time hospital discovery |
-| OSRM | Road routing and ETA calculation |
-| Groq | High-speed AI inference |
-| Llama 3.3 | Core model for AERO AI |
-
-### Analytics & Development
-| Technology | Purpose |
-| --- | --- |
-| Recharts | Admin dashboard analytics |
-| Git | Version control |
-| GitHub | Repository hosting |
+| Category                   | Technology              | Purpose                                  |
+| -------------------------- | ----------------------- | ---------------------------------------- |
+| **Frontend Framework**     | React 19                | Builds the web application               |
+| **Build Tool**             | Vite 8                  | Development server and production builds |
+| **Programming Language**   | TypeScript              | Type-safe frontend code                  |
+| **UI / CSS**               | Tailwind CSS v4         | Styling and responsive UI                |
+| **Maps**                   | Leaflet                 | Interactive maps                         |
+| **React Map Integration**  | React-Leaflet           | Uses Leaflet inside React                |
+| **Map Data**               | OpenStreetMap           | Geographic/map data                      |
+| **GPS**                    | Browser Geolocation API | Gets ambulance location                  |
+| **Routing**                | OSRM                    | Calculates road routes, distance and ETA |
+| **Backend/API Layer**      | Node.js                 | Server runtime                           |
+| **Backend Framework**      | Express.js              | API/proxy server                         |
+| **Database Platform**      | Supabase                | Backend-as-a-service platform            |
+| **Database**               | PostgreSQL              | Stores application data                  |
+| **Authentication**         | Supabase Auth           | Registration, login and sessions         |
+| **Authorization/Security** | Supabase RLS            | Row-level database access control        |
+| **Real-Time**              | Supabase Realtime       | Live emergency synchronization           |
+| **Hospital Search**        | Google Places API       | Finds nearby hospitals                   |
+| **AI**                     | Groq API                | AI inference                             |
+| **AI Model**               | Llama 3.3               | Powers AERO AI assistant                 |
+| **Charts**                 | Recharts                | Admin analytics                          |
+| **Version Control**        | Git                     | Source control                           |
+| **Repository**             | GitHub                  | Code hosting/collaboration               |
 
 ---
 
