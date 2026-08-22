@@ -1,418 +1,730 @@
 <div align="center">
-  
-# 🚑 LIFELANE
 
+# 🚑 LIFELANE
 ### Clear the Way. Save Critical Time.
 
-> A real-time emergency coordination platform connecting ambulances with traffic-response personnel through GPS, maps, routing, emergency alerts, and live operational visibility.
+Real-time emergency coordination between ambulances and traffic-response personnel.
+
+**🚑 Ambulance → 📍 GPS → 🚨 SOS → ⚡ Realtime → 👮 Police**
 
 ![React](https://img.shields.io/badge/React_19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Vite](https://img.shields.io/badge/Vite_8-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![Tailwind](https://img.shields.io/badge/Tailwind_CSS_4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Supabase](https://img.shields.io/badge/Supabase-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-![Express.js](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
-
-<img src="./src/assets/hero.png" width="800" alt="LIFELANE Emergency Coordination Interface" />
+![Leaflet](https://img.shields.io/badge/Leaflet-199900?style=for-the-badge&logo=leaflet&logoColor=white)
+![Express](https://img.shields.io/badge/Express.js-404D59?style=for-the-badge)
+![OSRM](https://img.shields.io/badge/OSRM-000000?style=for-the-badge)
 
 </div>
 
+<br>
+
+> **LIFELANE helps traffic-response personnel see an ambulance's live location, destination, route, ETA and emergency state through a shared real-time operational interface.**
+
+<br>
+
+## 🖼️ Product Interface
+
+<table align="center" width="100%">
+  <tr>
+    <td align="center" width="50%"><b>🚑 Ambulance Dashboard</b></td>
+    <td align="center" width="50%"><b>👮 Police Dashboard</b></td>
+  </tr>
+  <tr>
+    <td align="center"><img src="./src/assets/hero.png" alt="Ambulance Dashboard" /></td>
+    <td align="center"><i>Screenshot coming soon</i></td>
+  </tr>
+  <tr>
+    <td align="center" width="50%"><b>🛡️ Admin Overview</b></td>
+    <td align="center" width="50%"><b>🤖 AERO AI Assistant</b></td>
+  </tr>
+  <tr>
+    <td align="center"><i>Screenshot coming soon</i></td>
+    <td align="center"><i>Screenshot coming soon</i></td>
+  </tr>
+</table>
+
 ---
 
-## ⚡ Quick Value Proposition
+## 💡 What is LIFELANE?
 
-**🚑 AMBULANCE → 📍 LOCATION → 🚨 SOS → ⚙️ LIFELANE → 👮 TRAFFIC RESPONSE → 🗺️ LIVE COORDINATION → 🏥 HOSPITAL**
+LIFELANE connects an ambulance and traffic-response personnel through a shared real-time emergency view.
 
-LIFELANE bridges the communication gap between active ambulances and traffic police. By capturing live GPS data and syncing it instantly to a centralized operational dashboard, it allows traffic responders to see incoming emergencies, monitor live routes, and proactively clear congestion before the ambulance arrives.
+**The ambulance shares:**
+- Precise GPS location
+- Target hospital destination
+- OSRM-calculated route
+- Estimated Time of Arrival (ETA)
+- Emergency severity status
+
+**The responder receives:**
+- Instant emergency SOS alert
+- Live ambulance position on a map
+- Destination and route path
+- Operational status
+
+**The objective:**
+Reduce coordination delays and provide better situational awareness so intersections can be managed *before* the ambulance arrives.
 
 ---
 
 ## 🛑 The Problem
 
-### Today
-- An ambulance knows exactly where it is and where it needs to go.
-- Traffic police usually do **not** have immediate advance visibility of the ambulance's route.
-- Sirens only warn drivers within a few hundred meters.
-- Destination and exact ETA are rarely communicated to the personnel who can actually clear intersections ahead of time.
+### Traditional Situation
+```text
+🚑 Ambulance
+    ↓
+  Traffic
+    ↓
+Communication Fragmentation
+    ↓
+👮 Traffic Responder (Unaware)
+```
+Information is fragmented. The ambulance knows where it's going, but the police handling the intersections often do not have immediate visibility. 
 
-### The Result
-Critical time is lost in traffic bottlenecks. Coordination delays cost lives.
+### LIFELANE
+```text
+🚑 Ambulance
+    ↓
+  📍 GPS
+    ↓
+  🚨 SOS
+    ↓
+☁️ Shared Emergency State
+    ↓
+👮 Traffic Responder (Prepared)
+```
+Creates a unified, instantaneous digital corridor.
 
 ---
 
-## 💡 The Solution
+## 🔑 The Solution
 
-### LIFELANE
-Creates a shared emergency coordination layer that puts the ambulance and traffic personnel on the exact same map, in real-time.
-
-```text
-Ambulance
-    ↓
-Browser GPS
-    ↓
-Hospital Selection (Google Places API)
-    ↓
-Route + ETA (OSRM)
-    ↓
-SOS Triggered
-    ↓
-Supabase Database
-    ↓
-Supabase Realtime Sync
-    ↓
-Traffic Police Dashboard
-    ↓
-Live Emergency View & Corridor Clearance
-```
+LIFELANE solves coordination delays through 7 key features:
+- Live Browser Geolocation tracking
+- Hospital destination selection via Google Places API
+- Road route calculation using OSRM
+- Distance and ETA metrics
+- Instant SOS broadcasting
+- Realtime emergency synchronization
+- Dedicated responder visibility dashboard
 
 ---
 
 ## 🚨 Current MVP (Two-Device Concept)
 
-The **core working prototype** centers entirely around a synchronized two-device flow:
+**LIFELANE is a production-oriented emergency-response coordination prototype, with a working real-time ambulance-to-police MVP and a roadmap toward production deployment.**
 
-- **DEVICE 1: 🚑 Ambulance Unit** (Mobile-friendly interface)
-- **DEVICE 2: 👮 Traffic Police** (Operational Desktop Dashboard)
+The core working concept is a two-role emergency coordination flow across two devices:
 
-**CURRENTLY WORKING:**
-✅ Ambulance fetches precise geolocation via Browser GPS.
-✅ Ambulance discovers real nearby hospitals dynamically using the Google Places API.
-✅ Route geometry and ETAs are calculated instantly via OSRM.
-✅ SOS writes the active incident to a PostgreSQL database.
-✅ Traffic Police dashboard receives the incident instantaneously via Supabase Realtime WebSockets.
-✅ Traffic Police can "Accept" the emergency, acknowledging they are managing the corridor.
-✅ Live location tracks on a unified map.
+### Device 1: 🚑 Ambulance (Mobile-friendly UI)
+### Device 2: 👮 Traffic Police (Operational Desktop UI)
+
+**Current Flow:**
+```text
+Ambulance
+   ↓
+  GPS
+   ↓
+Hospital
+   ↓
+ Route
+   ↓
+  ETA
+   ↓
+  SOS
+   ↓
+Supabase
+   ↓
+Realtime
+   ↓
+ Police
+```
+The core objective is real-time emergency visibility between these two roles.
 
 ---
 
-## 🗺️ How The System Works
+## 🔄 Core Workflow
 
-### ✅ Current Working Architecture
-This is how LIFELANE operates *today* in this repository.
+**Current MVP Emergency Flow**
 
 ```mermaid
 flowchart LR
-    A[🚑 Ambulance App] -->|Browser GPS| B[React + Vite Frontend]
-    B -->|Search| C[Express API Proxy]
-    C -->|Fetch| D[Google Places API]
-    B -->|Routing| E[OSRM API]
-    B -->|Save SOS| F[(Supabase PostgreSQL)]
-    F -->|Postgres Changes| G[Supabase Realtime]
-    G -->|WebSocket Sync| H[👮 Police Dashboard]
-    H -->|Update State| F
+    A["🚑 Ambulance"] --> B["📍 GPS Location"]
+    B --> C["🏥 Hospital Selection"]
+    C --> D["🗺️ OSRM Routing"]
+    D --> E["📏 Distance + ETA"]
+    E --> F["🚨 SOS"]
+    F --> G["☁️ Supabase"]
+    G --> H["⚡ Supabase Realtime"]
+    H --> I["👮 Police Dashboard"]
+    I --> J["🚨 Emergency Coordination"]
+    J --> K["🏥 Hospital"]
 ```
-
-### 🔵 Planned Production Architecture
-This is the roadmap vision for enterprise-scale deployments.
-
-```mermaid
-flowchart LR
-    A[🚑 Ambulance] --> B[React + Vite]
-    B --> C[FastAPI / Python]
-    C --> D[(PostgreSQL + PostGIS)]
-    C --> E[(Redis)]
-    C --> F[Custom WebSocket Layer]
-    C --> G[OSRM Enterprise]
-    C --> H[Traffic API]
-    F --> I[👮 Police Dashboard]
-    I --> J[Traffic Signal / IoT Integration]
-```
-
----
-
-## 📊 Current Project Status
-
-| Area | Status |
-| :--- | :---: |
-| Project concept & architecture | ✅ |
-| React/Vite frontend foundation | ✅ |
-| UI/UX Design System (Tailwind v4) | ✅ |
-| Authentication UI & Protected Routes | ✅ |
-| Supabase Auth Integration | ✅ |
-| Role-based Dashboards (Ambulance / Police) | ✅ |
-| Live GPS integration (Browser API) | ✅ |
-| Leaflet map rendering & live markers | ✅ |
-| Real Hospital Search (Google Places Proxy) | ✅ |
-| Live Route & ETA (OSRM) | ✅ |
-| Real SOS backend persistence (PostgreSQL) | ✅ |
-| Live Incident Sync (Supabase Realtime) | ✅ |
-| AI Chatbot (Groq API) | ✅ |
-| Analytics Dashboard | 🟡 |
-| FastAPI / Python backend | 🔵 |
-| PostGIS Spatial Queries | 🔵 |
-| Custom Redis / WebSocket server | 🔵 |
-| Advanced Traffic APIs (Congestion) | 🔵 |
-| AI/ML Predictive Analytics | 🔮 |
-| Production Docker Deployment | 🔮 |
-
-*Legend: ✅ Implemented  \|  🟡 In Progress  \|  🔵 Planned  \|  🔮 Future/Research*
-
----
-
-## 🏗️ What We Have Built So Far
-
-### Product Foundation
-- A fully defined emergency coordination model isolating roles for Ambulance operators, Traffic Police, and System Admins.
-
-### Frontend Foundation
-- A robust **React 19 + Vite 8** single-page application.
-- Comprehensive **Tailwind CSS v4** design system.
-- Reusable UI primitives (Cards, Badges, Modals, Skeleton loaders).
-- Dedicated dark-mode operational theme designed for low cognitive load and high contrast.
-
-### Authentication & Security
-- Fully functioning Sign-in and Registration flows using **Supabase Auth**.
-- Strict Row Level Security (RLS) policies enforcing data isolation at the database layer.
-
-### Maps & GPS
-- **Leaflet + React-Leaflet** integration for performant mapping.
-- Native `navigator.geolocation.watchPosition()` for high-accuracy live tracking.
-- Interactive routing polylines and custom SVG status markers.
-
-### Backend & API
-- **Express.js API Proxy** designed to securely shield sensitive API keys (Google Maps, Groq).
-- A powerful **Supabase PostgreSQL** schema encompassing profiles, emergency incidents, and AI chat histories.
-- Complete **Supabase Realtime** channel broadcasting to sync state without polling.
-
----
-
-## 🎯 Product Experience
-
-LIFELANE is engineered to feel like a modern **Emergency Operations Center**. 
-
-**Design Principles:**
-- **Speed & Clarity:** Micro-interactions and immediate feedback loops.
-- **Minimal Cognitive Load:** Vital information (ETA, Distance, Priority) is prominently isolated.
-- **Mobile-First Ambulance:** Large hit targets, bold buttons, and high-contrast text for paramedics in moving vehicles.
-- **Operational Police View:** A dark, multi-feed dashboard designed for desktop monitors in control rooms.
 
 ---
 
 ## 👥 User Roles
 
-### 🚑 Ambulance Operator
-| Features | Status |
-| :--- | :---: |
-| Authenticate & Connect | ✅ |
-| Live GPS Tracking | ✅ |
-| Search Local Hospitals | ✅ |
-| View Route & ETA | ✅ |
-| Trigger SOS Alert | ✅ |
-| Chat with AI Assistant | ✅ |
-
-### 👮 Traffic Response
-| Features | Status |
-| :--- | :---: |
-| Monitor Global Map | ✅ |
-| Receive Instant SOS Alerts | ✅ |
-| View Ambulance Destination | ✅ |
-| Accept Emergency Corridor | ✅ |
-| Update Clearance Status | ✅ |
-
-### 🛡️ Administrator
-| Features | Status |
-| :--- | :---: |
-| System Overview UI | ✅ |
-| Active Emergency Roster | 🟡 |
-| Live Analytics | 🔵 |
-
----
-
-## 🔄 Core Workflows
-
-### Ambulance Journey
-```text
-LOGIN → ACQUIRE GPS → SEARCH HOSPITAL (Live) → PREVIEW ROUTE → CONFIRM SOS → BROADCAST EMERGENCY → DRIVE TO HOSPITAL
-```
-
-### Police Journey
-```text
-LOGIN → STANDBY → INCOMING ALERT RECEIVED (WebSocket) → VIEW AMBULANCE / ETA → ACCEPT CORRIDOR → COORDINATE TRAFFIC
-```
+<table align="center" width="100%">
+  <tr>
+    <td width="33%">
+      <h3>🚑 Ambulance Operator</h3>
+      <ul>
+        <li>✅ Start emergency</li>
+        <li>✅ Share GPS</li>
+        <li>✅ Choose destination</li>
+        <li>✅ Calculate route</li>
+        <li>✅ View ETA</li>
+        <li>✅ Trigger SOS</li>
+        <li>✅ Monitor emergency state</li>
+      </ul>
+    </td>
+    <td width="33%">
+      <h3>👮 Traffic Police</h3>
+      <ul>
+        <li>✅ Receive emergency alert</li>
+        <li>✅ View ambulance</li>
+        <li>✅ View route</li>
+        <li>✅ View destination</li>
+        <li>✅ View emergency state</li>
+        <li>✅ Coordinate response</li>
+      </ul>
+    </td>
+    <td width="33%">
+      <h3>🛡️ Administrator</h3>
+      <ul>
+        <li>✅ Operational overview</li>
+        <li>🟡 Emergency monitoring</li>
+        <li>🟡 Fleet visibility</li>
+        <li>🟡 Responder visibility</li>
+        <li>🟡 Analytics</li>
+      </ul>
+    </td>
+  </tr>
+</table>
 
 ---
 
-## 🛠️ Technical Architecture
+## 📊 Feature Matrix
 
-### GPS Technical Architecture
-LIFELANE relies on the native `navigator.geolocation.watchPosition()` API, tracking:
-- Latitude / Longitude
-- Accuracy (meters)
-- Speed & Heading (when hardware permits)
-
-State machines handle gracefully falling back when GPS is *Searching*, *Stale*, or *Denied*.
-
-### Map Technical Architecture
-Built on `React-Leaflet` rendering `OpenStreetMap` tiles. The map automatically bounds to the active emergency, calculating the optimal viewport to display both the ambulance's current location and the destination hospital.
-
-### SOS System Architecture
-1. **IDLE:** Browsing hospitals.
-2. **CONFIRMING:** User initiates SOS, a 3-second abort timer starts.
-3. **SENDING:** Frontend POSTs to Supabase.
-4. **ACTIVE:** Supabase inserts the record. `Supabase Realtime` broadcasts `postgres_changes` to all connected Police clients. 
-5. **ACCEPTED:** Police acknowledge the incident, updating the record.
+| Feature | Status | Technology |
+| --- | :---: | --- |
+| Landing Page | ✅ | React |
+| Authentication | ✅ | Supabase Auth |
+| Role Routing | ✅ | React Router |
+| GPS | ✅ | Browser Geolocation API |
+| Hospital Search | ✅ | Google Places API |
+| Hospital Selection | ✅ | React |
+| Map | ✅ | Leaflet |
+| Route | ✅ | OSRM |
+| Distance | ✅ | OSRM |
+| ETA | ✅ | OSRM |
+| SOS | ✅ | Supabase PostgreSQL |
+| Realtime Emergency Sync | ✅ | Supabase Realtime |
+| Police Dashboard | ✅ | React + Supabase |
+| AERO AI | ✅ | Groq + Llama 3.3 |
+| Admin Analytics | 🟡 | Recharts |
+| Live Traffic Delay APIs | 🔵 | Future |
+| Predictive ETA | 🔵 | Future ML |
+| Advanced Geospatial Queries | 🔵 | Future PostGIS |
+| Redis Pub/Sub | 🔵 | Future |
+| Dockerization | 🔵 | Future |
 
 ---
 
 ## 💻 Tech Stack
 
-| Technology | Purpose | Status |
-| :--- | :--- | :---: |
-| **React 19** | Component-based UI framework | ✅ |
-| **Vite 8** | High-speed frontend build tooling | ✅ |
-| **TypeScript** | Type-safe development | ✅ |
-| **Tailwind CSS v4** | Rapid, utility-first styling | ✅ |
-| **Supabase (PostgreSQL)**| Core relational database & persistence | ✅ |
-| **Supabase Auth** | JWT-based authentication | ✅ |
-| **Supabase Realtime** | WebSocket state synchronization | ✅ |
-| **Express / Node.js** | Secure server-side API proxy | ✅ |
-| **Google Places API** | Live hospital discovery | ✅ |
-| **OSRM** | Open-source road routing | ✅ |
-| **Groq (Llama 3.3)** | Conversational AI assistant | ✅ |
-| **Python / FastAPI** | Advanced backend services | 🔵 |
-| **Redis** | Custom pub/sub and caching | 🔵 |
-| **PostGIS** | Advanced spatial index querying | 🔵 |
+### Frontend
+| Technology | Purpose |
+| --- | --- |
+| React 19 | UI Components |
+| Vite 8 | Build tooling |
+| TypeScript | Type safety |
+| Tailwind CSS v4 | Styling and Design System |
+
+### Maps & Location
+| Technology | Purpose |
+| --- | --- |
+| Leaflet | Interactive mapping engine |
+| React-Leaflet | React integration for Leaflet |
+| OpenStreetMap | Open-source map tile data |
+| Browser Geolocation API | Live device GPS |
+
+### Backend & Data
+| Technology | Purpose |
+| --- | --- |
+| Node.js | Server runtime environment |
+| Express.js | Secure API proxy layer |
+| Supabase | Managed backend platform |
+| PostgreSQL | Core relational database |
+| Supabase Auth | User authentication (JWT) |
+| Supabase RLS | Authorization and row-level security |
+| Supabase Realtime | Real-time WebSocket synchronization |
+
+### External Services
+| Technology | Purpose |
+| --- | --- |
+| Google Places API | Real-time hospital discovery |
+| OSRM | Road routing and ETA calculation |
+| Groq | High-speed AI inference |
+| Llama 3.3 | Core model for AERO AI |
+
+### Analytics & Development
+| Technology | Purpose |
+| --- | --- |
+| Recharts | Admin dashboard analytics |
+| Git | Version control |
+| GitHub | Repository hosting |
 
 ---
 
-## 🗄️ Database Design
+## 🏗️ Technical Architecture
 
-The PostgreSQL schema heavily utilizes UUIDs, strict typing, and Row Level Security. 
-Key Tables (Implemented):
-- `profiles`: Role mapping (ambulance_operator vs traffic_operator).
-- `emergency_incidents`: Core operational table containing `route_geometry` (JSONB), `destination_latitude`, `corridor_status`, and `eta_minutes`.
-- `ai_conversations` & `ai_messages`: Chatbot history persistence.
+```mermaid
+flowchart TB
+    subgraph CLIENT["Client Applications"]
+        AMB["🚑 Ambulance Dashboard"]
+        POL["👮 Police Dashboard"]
+        ADM["🛡️ Admin Dashboard"]
+    end
+
+    subgraph FRONTEND["Frontend"]
+        REACT["React 19 + TypeScript"]
+        VITE["Vite 8"]
+        TAILWIND["Tailwind CSS v4"]
+        MAP["Leaflet + React-Leaflet"]
+        GPS["Browser Geolocation API"]
+    end
+
+    subgraph SERVER["Application Services"]
+        EXPRESS["Node.js + Express"]
+        PLACES["Google Places API"]
+        GROQ["Groq / Llama 3.3"]
+    end
+
+    subgraph SUPABASE["Supabase"]
+        AUTH["Supabase Auth"]
+        DB["PostgreSQL"]
+        RLS["Row Level Security"]
+        REALTIME["Supabase Realtime"]
+    end
+
+    subgraph ROUTING["Routing"]
+        OSRM["OSRM"]
+        OSM["OpenStreetMap"]
+    end
+
+    AMB --> REACT
+    POL --> REACT
+    ADM --> REACT
+
+    REACT --> VITE
+    REACT --> TAILWIND
+    REACT --> MAP
+    REACT --> GPS
+
+    REACT --> EXPRESS
+    EXPRESS --> PLACES
+    EXPRESS --> GROQ
+
+    REACT --> AUTH
+    REACT --> DB
+    REACT --> REALTIME
+    DB --> RLS
+
+    REACT --> OSRM
+    MAP --> OSM
+```
 
 ---
 
-## 📂 Project Structure
+## 📡 Detailed Technical Working
 
+### Realtime Architecture
+LIFELANE currently uses **Supabase Realtime** rather than maintaining a custom WebSocket + Redis infrastructure.
+```text
+🚑 Ambulance
+     ↓
+Emergency state
+     ↓
+Supabase (PostgreSQL Insert/Update)
+     ↓
+Realtime event (logical replication)
+     ↓
+👮 Police Dashboard
+     ↓
+UI updates dynamically
 ```
-AERO-main/
-├── server/
-│   └── index.js                 # Express API Proxy (Groq, Google Places)
-├── supabase/
-│   └── full_setup.sql           # Complete Postgres schema, RLS, & triggers
-├── src/
-│   ├── assets/                  # Static media
-│   ├── components/              # Shared UI & Leaflet Map components
-│   ├── features/
-│   │   ├── admin/               # Admin dashboard routes
-│   │   ├── ai/                  # AERO Intelligence chatbot UI
-│   │   ├── ambulance/           # Ambulance operator workflow
-│   │   ├── auth/                # Login & Registration
-│   │   └── police/              # Traffic police dashboard
-│   ├── hooks/                   # Custom React hooks (useLocation, etc)
-│   ├── services/                # API wrappers (Supabase, OSRM)
-│   └── App.tsx                  # Main Router
-├── vite.config.ts               # Vite configuration
-└── package.json                 # Dependencies
+
+### GPS Architecture
+Built on the native `navigator.geolocation.watchPosition()` API, tracking:
+* Latitude
+* Longitude
+* Accuracy (meters)
+* Timestamp
+* Speed & Heading (when available)
+
+The application handles various permission states including: `granted`, `denied`, `unavailable`, `loading`, and `low accuracy`. Accuracy is hardware dependent.
+
+### Map Architecture
+```text
+React
+ ↓
+React-Leaflet
+ ↓
+Leaflet
+ ↓
+OpenStreetMap
+```
+Handles map rendering, custom SVG status markers, dynamic map centering based on moving bounds, and responsive behavior for mobile environments.
+
+### Routing Architecture
+```text
+Ambulance Coordinates
+         +
+Hospital Coordinates
+         ↓
+       OSRM
+         ↓
+    Road Route
+         +
+      Distance
+         +
+        ETA
+```
+*Note: OSRM currently provides route-based ETA based on standard road network speeds. Live dynamic congestion-aware ETA is a future planned feature.*
+
+### Hospital Discovery
+```text
+Ambulance GPS
+         ↓
+Express Proxy Server
+         ↓
+Google Places API (New)
+         ↓
+Nearby Hospitals
+         ↓
+Hospital Selection UI
 ```
 
 ---
 
-## 🚀 Local Development
+## 🆘 SOS Lifecycle
 
-### Prerequisites
-- Node.js (v18+)
-- A Supabase Project
-- Google Maps API Key
-- Groq API Key
-
-### 1. Clone & Install
-```bash
-git clone https://github.com/your-username/AERO-main.git
-cd AERO-main
-npm install
+```mermaid
+stateDiagram-v2
+    [*] --> IDLE : Searching Hospitals
+    IDLE --> CONFIRMING : 3-second abort timer
+    CONFIRMING --> SENDING : POST to Database
+    SENDING --> ACTIVE : Supabase Inserted
+    ACTIVE --> RESOLVED : Mission Completed
+    ACTIVE --> CANCELLED : Aborted
+    CONFIRMING --> IDLE : Cancelled during countdown
 ```
 
-### 2. Environment Variables
-Copy `.env.example` to `.env` and fill in your keys:
-```env
-# Supabase
-VITE_SUPABASE_URL=https://your-project.supabase.co
-VITE_SUPABASE_ANON_KEY=your-anon-key
+---
 
-# Backend Proxies
-GROQ_API_KEY=gsk_your_key
-GOOGLE_MAPS_API_KEY=AIza...
+## 🤖 AERO AI
+
+AERO is the intelligent conversational assistant within LIFELANE.
+
+**Current implementation:**
+```text
+User
+ ↓
+AERO Assistant UI
+ ↓
+Groq API Proxy
+ ↓
+Llama 3.3 Model
+ ↓
+Response
 ```
-
-### 3. Database Setup
-1. Go to your Supabase Dashboard → SQL Editor.
-2. Paste and run the entire contents of `supabase/full_setup.sql`.
-3. Manually update your created police user's role:
-   `UPDATE profiles SET role = 'traffic_operator' WHERE email = 'police@example.com';`
-
-### 4. Run the Stack
-We use `concurrently` to spin up both the Vite frontend and Express backend:
-```bash
-npm run dev
-```
+AERO currently provides conversational AI assistance for operators. *(Note: AERO does not currently perform predictive traffic ML or automated ETA adjustment).*
 
 ---
 
 ## 🔐 Authentication & Security
 
-- **Current:** Supabase Auth manages JWT sessions. The Express backend uses token verification middlewares to protect API proxy endpoints. Supabase Row Level Security (RLS) guarantees that users can only read/write data permitted by their `profiles.role`.
-- **Planned:** Migration of complex business logic out of the frontend and into a hardened FastAPI backend, with strict API-gateway rate limiting.
+- **Authentication (Who you are):** Managed by Supabase Auth (JWT Sessions).
+- **Authorization (What you can access):** Managed by strictly enforced Row Level Security (RLS). Database policies ensure that Ambulance operators can only edit their own incidents, while authorized Police operators can view active global incidents.
+- **Server-Side API Proxying:** Node.js/Express acts as a secure gateway, ensuring sensitive API keys (Google Places, Groq) are never exposed to the browser.
+
+---
+
+## 🗄️ Database Schema
+
+The database resides in PostgreSQL via Supabase.
+**Core verified entities (`supabase/full_setup.sql`):**
+* `profiles`: Links to auth.users, stores roles (`ambulance_operator`, `traffic_operator`, `admin`).
+* `emergency_incidents`: Tracks the ambulance, destination hospital, live coordinates, speed, ETA, route geometry (JSONB), and corridor status.
+* `ai_conversations` & `ai_messages`: Persists historical chat data for the AERO assistant.
+
+---
+
+## 📂 Project Structure
+
+```text
+AERO-main/
+├── server/
+│   └── index.js                 # Express API Proxy
+├── src/
+│   ├── assets/                  # Images and static files
+│   ├── components/              # Shared UI & Maps
+│   ├── features/                # Domain specific code
+│   │   ├── admin/
+│   │   ├── ai/
+│   │   ├── ambulance/
+│   │   ├── auth/
+│   │   └── police/
+│   ├── hooks/                   # Custom React hooks
+│   ├── services/                # External API integration
+│   └── App.tsx                  # Application routing
+├── supabase/
+│   └── full_setup.sql           # Verified database schema
+├── package.json                 # Dependencies & scripts
+└── vite.config.ts               # Bundler configuration
+```
+
+---
+
+## 🚀 Setup & Local Development
+
+**1. Clone & Install**
+```bash
+git clone <repository_url>
+cd AERO-main
+npm install
+```
+
+**2. Environment Setup**
+Copy `.env.example` to `.env` and fill out your keys. Never expose secrets to the public repository.
+```env
+# Frontend variables (Vite)
+VITE_SUPABASE_URL=YOUR_VALUE_HERE
+VITE_SUPABASE_ANON_KEY=YOUR_VALUE_HERE
+
+# Backend Proxies (Express)
+GROQ_API_KEY=YOUR_VALUE_HERE
+GOOGLE_MAPS_API_KEY=YOUR_VALUE_HERE
+```
+
+**3. Database Setup**
+Execute the contents of `supabase/full_setup.sql` in your Supabase SQL Editor. Update your police user's role:
+`UPDATE profiles SET role = 'traffic_operator' WHERE email = 'YOUR_VALUE_HERE';`
+
+**4. Run Development Servers**
+```bash
+npm run dev
+```
+*(This uses `concurrently` to boot both the Vite frontend and Node/Express backend simultaneously).*
+
+---
+
+## 🧪 Testing
+
+- **Build / Typecheck:** `npm run build` executes `tsc -b` for strict type validation.
+- **Linting:** `npm run lint` uses `oxlint` for high-speed analysis.
+- *Automated unit and E2E test coverage is currently limited/not yet implemented for this prototype MVP.*
+
+---
+
+## 📊 Current Implementation Status
+
+| Area | Status |
+| --- | :---: |
+| Product concept | ✅ |
+| Frontend | ✅ |
+| Design system | ✅ |
+| Authentication | ✅ |
+| GPS | ✅ |
+| Maps | ✅ |
+| Hospital discovery | ✅ |
+| Routing | ✅ |
+| ETA | ✅ |
+| SOS | ✅ |
+| Realtime | ✅ |
+| Police dashboard | ✅ |
+| AERO AI | ✅ |
+| Admin analytics | 🟡 |
+| Live traffic API | 🔵 |
+| Predictive ML ETA | 🔵 |
+| PostGIS | 🔵 |
+| Custom WebSockets / Redis | 🔵 |
+| Docker | 🔵 |
+| Production deployment | 🔵 |
 
 ---
 
 ## 🛤️ Roadmap
 
-- [x] **Phase 1:** Core UI & Design System
-- [x] **Phase 2:** Authentication & GPS Architecture
-- [x] **Phase 3:** Real Hospital Search (Google Places) & OSRM Routing
-- [x] **Phase 4:** Supabase PostgreSQL & Realtime Websockets (Current MVP)
-- [ ] **Phase 5:** FastAPI Python Backend Foundation
-- [ ] **Phase 6:** PostGIS Spatial Optimization
-- [ ] **Phase 7:** Live Traffic API Integration (Congestion metrics)
-- [ ] **Phase 8:** Advanced AI/ML Predictors
+- **Phase 1 — Design Foundation:** ✅
+- **Phase 2 — Frontend Application:** ✅
+- **Phase 2.5 — Public + Auth + GPS + Maps:** ✅
+- **Phase 3 — Backend Hardening:** 🟡
+- **Phase 4 — Production Authentication & Security:** 🔵
+- **Phase 5 — Advanced Geospatial Infrastructure:** 🔵
+- **Phase 6 — Traffic Intelligence:** 🔵
+- **Phase 7 — Predictive ETA:** 🔵
+- **Phase 8 — Advanced Analytics:** 🔵
+- **Phase 9 — Production Deployment:** 🔵
+- **Phase 10 — Real-World Pilot:** 🔮
 
 ---
 
-## 🤖 Future AI / ML
+## 🔵 Future Architecture
 
-While LIFELANE currently uses **Groq (Llama 3.3)** for the conversational Assistant, future phases plan to implement predictive ML models to forecast ETA disruptions, intelligently position ambulance fleets based on historical demand, and recommend optimal emergency corridors. *(Note: Reliable predictive ML requires massive historical datasets which LIFELANE is designed to eventually collect).*
+Planned Production Architecture — Not Yet Implemented
+
+```mermaid
+flowchart LR
+    AMB["🚑 Ambulances"]
+    TRAFFIC["👮 Traffic Units"]
+
+    AMB --> API["Future API Layer"]
+    API --> FASTAPI["FastAPI"]
+    
+    FASTAPI --> POSTGIS["PostgreSQL + PostGIS"]
+    FASTAPI --> REDIS["Redis"]
+    FASTAPI --> WS["WebSockets"]
+    FASTAPI --> OSRM["OSRM"]
+    FASTAPI --> TRAFFICAPI["Traffic API"]
+    FASTAPI --> ML["Predictive ML"]
+
+    WS --> TRAFFIC
+```
 
 ---
 
-## ⚠️ Limitations & Production Considerations
+## 🔮 Future AI / ML
 
-> **LIFELANE is currently a prototype/development project intended to demonstrate emergency-response coordination concepts. It is not a replacement for official emergency services, dispatch systems, or government traffic-control infrastructure.**
+Future possibilities for LIFELANE data utilization:
+* Predictive ETA adjustment based on real-time congestion
+* Route optimization and alternate pathing
+* Emergency demand prediction
+* Responder fleet positioning algorithms
+* Anomaly detection for unusual delays
 
-- **GPS Reliability:** Completely dependent on the browser/hardware geolocation capabilities.
-- **Traffic Interfacing:** Does NOT currently control physical municipal traffic lights.
-- **Production Readiness:** Requires rigorous load testing, WebSocket reconnect hardening, and offline-capability engineering before real-world deployment.
+*(Predictive ML requires robust historical operational data and is slated for late-stage development).*
 
 ---
 
-## 🎓 LIFELANE in 30 Seconds
+## 🛠️ Production Readiness
 
-*"LIFELANE is a real-time emergency coordination platform. It allows an ambulance to select a destination hospital and instantly broadcast its live GPS route to a centralized traffic-police dashboard via WebSockets. This gives traffic responders the advance visibility they need to clear congestion before the ambulance arrives, ultimately saving critical time."*
+**Application:**
+- [x] Error handling
+- [x] Loading states
+- [ ] Comprehensive offline handling
+- [x] GPS failure handling / fallbacks
 
-**Explain it in 10 seconds:**
-*"LIFELANE puts ambulances and traffic police on the exact same live map so they can coordinate emergency routes in real-time."*
+**Security:**
+- [x] Authentication
+- [x] Authorization (Role-based)
+- [x] Database RLS
+- [x] Secrets management (via Express proxy)
+- [ ] Strict rate limiting
+- [ ] Comprehensive audit logging
+
+**Infrastructure:**
+- [ ] Application monitoring
+- [ ] Automated backups
+- [ ] CI/CD pipelines
+- [ ] Scalability testing
+
+**Operational:**
+- [ ] Real-device field testing
+- [ ] Responder workflow validation
+- [ ] Authorized municipal traffic integration
+
+---
+
+## ⚠️ Limitations
+
+- Browser GPS is heavily dependent on hardware capability and OS location permissions.
+- OSRM route ETA is currently based on static road speeds and does not automatically equal live-traffic ETA.
+- The current prototype does **not** control municipal traffic signals.
+- Admin analytics are partially mock/static UI representations.
+- Dedicated traffic integration and predictive ML are strictly future scope.
+- Production emergency deployment requires extensive real-world validation and certification.
+
+---
+
+## 🌍 Why This Project Matters
+
+LIFELANE attacks the communication fragmentation inherent in modern emergency transit. By creating shared location visibility and route transparency, responders gain critical situational awareness. Faster communication and scalable digital coordination mean earlier intersection clearance, fewer traffic delays, and ultimately, saved lives.
+
+---
+
+## 🎓 Viva Section
+
+### Explain LIFELANE in 30 Seconds
+"LIFELANE is a real-time emergency coordination platform. It allows an ambulance to select a destination hospital and instantly broadcast its live GPS route to a centralized traffic-police dashboard via Supabase WebSockets. This gives traffic responders the advance visibility they need to clear congestion before the ambulance arrives."
+
+**Explain the architecture in 30 seconds**
+"It's a React/Vite frontend using Leaflet for maps and OSRM for routing, backed by a Node/Express API proxy for external services. Data is persisted in PostgreSQL and synchronized in real-time across devices using Supabase Realtime WebSockets."
+
+**Explain the GPS system**
+"It uses the browser's native `navigator.geolocation.watchPosition()` API to stream high-accuracy coordinates, speed, and heading, while state machines handle fallbacks for denied or degraded permissions."
+
+**Explain the realtime system**
+"Instead of manually managing WebSockets and Redis, we leverage Supabase Realtime, which listens to PostgreSQL logical replication logs and broadcasts database row changes to subscribed React clients instantly."
+
+**Explain the database**
+"We use PostgreSQL managed by Supabase, relying heavily on UUIDs, strict typing, and Row Level Security (RLS) to ensure data isolation between different operational roles."
+
+**Explain why Supabase**
+"It provides an instant PostgreSQL database, robust JWT authentication, and out-of-the-box WebSocket synchronization, which allowed us to rapidly build the MVP without managing complex realtime backend infrastructure."
+
+**Explain why OSRM**
+"OSRM (Open Source Routing Machine) is extremely fast and specifically optimized for calculating shortest-path road network routes and ETAs based on OpenStreetMap data."
+
+**Explain why Leaflet**
+"Leaflet is a lightweight, open-source mapping library that integrates perfectly with React and allows us to easily render custom map tiles, polylines, and dynamic SVG markers without heavy vendor lock-in."
+
+**Explain AERO AI**
+"AERO is a conversational assistant built into the application, powered by the Llama 3.3 model via the Groq API. It provides intelligent operational assistance to users, with prompts proxied securely through our Node.js server."
 
 ---
 
 ## ❓ FAQ
 
-**Q: Does it control traffic lights?**
-No. It provides situational awareness to traffic police who can manually coordinate road clearance.
+**What is LIFELANE?**
+An emergency coordination platform linking ambulances with traffic response units.
 
-**Q: How does the Police dashboard update instantly?**
-It uses Supabase Realtime, which listens to PostgreSQL logical replication logs and broadcasts database changes over WebSockets.
+**Who uses it?**
+Ambulance drivers (mobile) and traffic police dispatchers (desktop).
 
-**Q: Why Express.js?**
-It currently serves as a lightweight API proxy to hide sensitive API keys (Google Places, Groq) from the frontend browser.
+**How does the ambulance send SOS?**
+The operator selects a hospital and confirms the SOS, which writes a record containing their route and GPS data directly to the database.
 
-**Q: Is it production-ready?**
-No, it is an advanced functioning prototype MVP.
+**How does police receive the emergency?**
+Supabase Realtime detects the database insert and broadcasts the payload to the Police dashboard via WebSockets.
+
+**How does routing work?**
+Coordinate pairs are sent to OSRM, which returns a GeoJSON polyline and distance/ETA metrics.
+
+**Does OSRM provide live traffic?**
+No, currently it provides base road-network ETAs.
+
+**Does LIFELANE control traffic signals?**
+No, it provides situational awareness to human officers who can manage intersections.
+
+**Why Node/Express?**
+It acts as a secure API gateway, ensuring our Google Places and Groq API keys are never exposed to the client browser.
+
+**What AI model is used?**
+Llama 3.3, served through Groq for high-speed inference.
+
+**Is it production-ready?**
+No, it is a production-oriented prototype requiring further validation, security hardening, and infrastructure work.
+
+**What is planned next?**
+Migrating the backend logic to a dedicated Python/FastAPI service and implementing PostGIS spatial queries.
 
 ---
+
+> **DISCLAIMER:** LIFELANE is currently a prototype/development project designed to demonstrate emergency-response coordination concepts. It is not a replacement for official emergency services, dispatch systems, medical services, or government traffic-control infrastructure.
 
 <div align="center">
   <p>License: Not yet specified.</p>
