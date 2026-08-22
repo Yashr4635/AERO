@@ -1,0 +1,178 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* ============================================================
+   AERO Design System — CSS Custom Properties & Theme
+   ============================================================ */
+
+@theme {
+  /* ── Color Palette: Navy ── */
+  --color-navy-950: #0a0e1a;
+  --color-navy-900: #0f1629;
+  --color-navy-800: #1a2340;
+  --color-navy-700: #243056;
+  --color-navy-600: #2e3d6b;
+  --color-navy-500: #4a5888;
+  --color-navy-400: #6b7ab0;
+  --color-navy-300: #9aa5cd;
+  --color-navy-200: #c8cfe8;
+  --color-navy-100: #e8ecf5;
+  --color-navy-50: #f4f6fb;
+
+  /* ── Semantic: Emergency ── */
+  --color-emergency-950: #2a0505;
+  --color-emergency-900: #450a0a;
+  --color-emergency-800: #7f1d1d;
+  --color-emergency-700: #b91c1c;
+  --color-emergency-600: #dc2626;
+  --color-emergency-500: #ef4444;
+  --color-emergency-400: #f87171;
+  --color-emergency-300: #fca5a5;
+  --color-emergency-200: #fecaca;
+  --color-emergency-100: #fee2e2;
+  --color-emergency-50: #fef2f2;
+
+  /* ── Semantic: Warning ── */
+  --color-warning-900: #451a03;
+  --color-warning-800: #78350f;
+  --color-warning-700: #b45309;
+  --color-warning-600: #d97706;
+  --color-warning-500: #f59e0b;
+  --color-warning-400: #fbbf24;
+  --color-warning-300: #fcd34d;
+  --color-warning-200: #fde68a;
+  --color-warning-100: #fef3c7;
+  --color-warning-50: #fffbeb;
+
+  /* ── Semantic: Success ── */
+  --color-success-900: #052e16;
+  --color-success-800: #065f46;
+  --color-success-700: #047857;
+  --color-success-600: #059669;
+  --color-success-500: #10b981;
+  --color-success-400: #34d399;
+  --color-success-300: #6ee7b7;
+  --color-success-200: #a7f3d0;
+  --color-success-100: #d1fae5;
+  --color-success-50: #ecfdf5;
+
+  /* ── Semantic: Info ── */
+  --color-info-900: #083344;
+  --color-info-800: #155e75;
+  --color-info-700: #0e7490;
+  --color-info-600: #0891b2;
+  --color-info-500: #06b6d4;
+  --color-info-400: #22d3ee;
+  --color-info-300: #67e8f9;
+  --color-info-200: #a5f3fc;
+  --color-info-100: #cffafe;
+  --color-info-50: #ecfeff;
+
+  /* ── Shadows ── */
+  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.4);
+  --shadow-overlay: 0 4px 16px rgba(0, 0, 0, 0.5);
+  --shadow-modal: 0 8px 32px rgba(0, 0, 0, 0.6);
+  --shadow-emergency: 0 0 20px rgba(239, 68, 68, 0.4);
+  --shadow-success-glow: 0 0 12px rgba(16, 185, 129, 0.3);
+
+  /* ── Font Family ── */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  /* ── Animation ── */
+  --animate-fade-in: fade-in 150ms ease-out;
+  --animate-slide-up: slide-up 200ms ease-out;
+  --animate-pulse-emergency: pulse-emergency 2s ease-in-out infinite;
+  --animate-pulse-soft: pulse-soft 2s ease-in-out infinite;
+}
+
+/* ── Keyframes ── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse-emergency {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5); }
+  50% { box-shadow: 0 0 20px 4px rgba(239, 68, 68, 0.3); }
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Base Styles ── */
+html {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-navy-950);
+  color: var(--color-navy-100);
+  min-height: 100dvh;
+}
+
+#root {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Focus Styles ── */
+:focus-visible {
+  outline: 2px solid var(--color-info-500);
+  outline-offset: 2px;
+}
+
+/* ── Scrollbar (webkit) ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-navy-900);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-navy-600);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-navy-500);
+}
+
+/* ── Leaflet Overrides ── */
+.leaflet-container {
+  background-color: var(--color-navy-950) !important;
+  font-family: var(--font-sans) !important;
+}
+.leaflet-control-zoom {
+  border: none !important;
+  box-shadow: var(--shadow-card) !important;
+}
+.leaflet-control-zoom a {
+  background-color: var(--color-navy-800) !important;
+  color: var(--color-navy-100) !important;
+  border-color: var(--color-navy-600) !important;
+}
+.leaflet-control-zoom a:hover {
+  background-color: var(--color-navy-700) !important;
+}
