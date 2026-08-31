@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { ShieldAlert, LayoutDashboard, Building2, Ambulance } from 'lucide-react';
 import { Button } from '../../../components/ui/Button';
 
 export function LandingPage() {
@@ -35,16 +36,32 @@ export function LandingPage() {
   };
 
   return (
-    <div className="min-h-dvh bg-navy-950 text-navy-50 flex flex-col font-sans selection:bg-emergency-500/30">
+    <div className="min-h-dvh bg-navy-950 text-navy-50 flex flex-col font-sans selection:bg-emergency-500/30 relative">
+      {/* ── DOT GRID BACKGROUND ── */}
+      <div 
+        className="absolute inset-0 z-0 pointer-events-none opacity-20" 
+        style={{ 
+          backgroundImage: 'radial-gradient(circle, #64748B 1px, transparent 1px)', 
+          backgroundSize: '24px 24px' 
+        }} 
+      />
+      
       {/* ── HEADER ── */}
       <header 
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 flex flex-col ${
           isScrolled 
-            ? 'bg-navy-950/90 backdrop-blur-md border-b border-navy-800 shadow-lg' 
-            : 'bg-transparent border-b border-transparent'
-        } px-6 py-4`}
+            ? 'bg-navy-950/90 backdrop-blur-md shadow-lg' 
+            : 'bg-transparent'
+        }`}
       >
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
+        {/* ── PROTOTYPE BANNER ── */}
+        <div className="w-full bg-amber-500/90 backdrop-blur-sm text-navy-950 text-xs font-bold tracking-wide py-1.5 px-4 text-center uppercase shadow-md flex items-center justify-center gap-2">
+          <ShieldAlert size={14} className="text-navy-950 shrink-0" />
+          AERO — Prototype demo. Not affiliated with any government or emergency authority. For demonstration purposes only.
+        </div>
+
+        <div className={`w-full px-6 py-4 border-b transition-colors duration-300 ${isScrolled ? 'border-navy-800' : 'border-transparent'}`}>
+          <div className="max-w-7xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <div 
             className="flex items-center gap-2 cursor-pointer" 
@@ -72,13 +89,17 @@ export function LandingPage() {
           </nav>
 
           {/* Actions */}
-          <div className="hidden md:flex items-center gap-3">
-            <Button variant="ghost" onClick={() => navigate('/login')} className="text-navy-200 hover:text-white hover:bg-navy-800">
-              SIGN IN
-            </Button>
-            <Button variant="primary" onClick={() => navigate('/register')} className="bg-emergency-600 hover:bg-emergency-500 text-white shadow-lg shadow-emergency-900/40">
+          <div className="flex items-center gap-4">
+            <Link to="/login" className="flex items-center gap-2 text-cyan-400 hover:text-cyan-300 text-sm font-bold transition-colors hidden sm:flex bg-cyan-500/10 px-4 py-2 rounded-full border border-cyan-500/20">
+              <LayoutDashboard size={16} />
+              COMMAND LOGIN
+            </Link>
+            <Link to="/register" className="bg-emergency-600 hover:bg-emergency-500 text-white px-5 py-2 rounded-full text-sm font-bold transition-all shadow-lg shadow-emergency-900/40 hidden md:block">
               GET STARTED
-            </Button>
+            </Link>
+            <Link to="/request" className="bg-gradient-to-r from-[#EF4444] to-[#F97316] hover:brightness-110 text-white px-5 py-2 rounded-full text-sm font-bold transition-all shadow-lg hover:shadow-red-500/25 hover:scale-[1.02]">
+              REQUEST AMBULANCE
+            </Link>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -95,6 +116,7 @@ export function LandingPage() {
               )}
             </svg>
           </button>
+          </div>
         </div>
       </header>
 
@@ -108,43 +130,43 @@ export function LandingPage() {
           </nav>
           <div className="flex flex-col gap-4 mt-8 pt-8 border-t border-navy-800">
             <Button variant="outline" onClick={() => navigate('/login')} className="w-full justify-center">SIGN IN</Button>
-            <Button variant="primary" onClick={() => navigate('/register')} className="w-full justify-center bg-emergency-600">GET STARTED</Button>
+            <Button variant="primary" onClick={() => navigate('/register')} className="w-full justify-center">GET STARTED</Button>
           </div>
         </div>
       )}
 
       {/* ── HERO SECTION ── */}
-      <section className="pt-32 pb-20 md:pt-40 md:pb-28 px-6 relative overflow-hidden flex flex-col items-center">
-        {/* Abstract map/grid background */}
-        <div className="absolute inset-0 z-0 opacity-10 pointer-events-none" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '32px 32px' }} />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-emergency-600/10 blur-[120px] rounded-full pointer-events-none z-0" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-cyan-600/10 blur-[100px] rounded-full pointer-events-none z-0" />
+      <section className="relative pt-32 pb-32 lg:pt-48 lg:pb-32 overflow-hidden min-h-dvh flex flex-col justify-center">
+        {/* Subtle Background Glow */}
+        <div className="absolute inset-0 z-0">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-red-500/5 rounded-full blur-3xl opacity-50" />
+        </div>
 
         <div className="max-w-7xl mx-auto w-full relative z-10 flex flex-col lg:flex-row items-center gap-12 lg:gap-8">
           
           {/* Hero Content */}
           <div className="flex-1 text-center lg:text-left flex flex-col items-center lg:items-start">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emergency-900/40 border border-emergency-500/30 text-emergency-400 text-xs font-bold tracking-wider uppercase mb-8 shadow-sm">
-              <span className="w-2 h-2 rounded-full bg-emergency-500 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#EF4444]/15 border border-[#EF4444] text-[#EF4444] text-xs font-bold tracking-wider uppercase mb-8 shadow-sm">
+              <span className="w-2 h-2 rounded-full bg-[#EF4444] animate-[pulse-glow_2s_ease-in-out_infinite]" />
               LIVE EMERGENCY ROUTING
             </div>
             
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1] text-white">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6 leading-[1.1] text-[#F8FAFC]">
               Every Second Matters.<br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-emergency-400 via-rose-400 to-orange-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#F97316] to-[#EF4444]">
                 Make Every Route Count.
               </span>
             </h1>
             
-            <p className="text-lg md:text-xl text-navy-300 mb-10 max-w-2xl leading-relaxed">
+            <p className="text-lg md:text-xl text-[#94A3B8] mb-10 max-w-2xl leading-relaxed">
               AERO coordinates ambulances, traffic-response teams, and hospitals through real-time location intelligence, route optimization, and emergency coordination.
             </p>
             
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-              <Button size="xl" onClick={() => navigate('/register')} className="w-full sm:w-auto px-8 bg-emergency-600 hover:bg-emergency-500 text-white shadow-lg shadow-emergency-900/40">
-                START EMERGENCY ROUTING
+              <Button variant="primary" size="xl" onClick={() => navigate('/request')} className="w-full sm:w-auto px-8 shadow-lg shadow-[#EF4444]/20">
+                REQUEST AMBULANCE
               </Button>
-              <Button variant="outline" size="xl" onClick={() => scrollToSection('how-it-works')} className="w-full sm:w-auto px-8 border-navy-600 text-navy-200 hover:bg-navy-800">
+              <Button variant="outline" size="xl" onClick={() => scrollToSection('how-it-works')} className="w-full sm:w-auto px-8">
                 EXPLORE HOW IT WORKS
               </Button>
             </div>
@@ -156,10 +178,10 @@ export function LandingPage() {
               {/* Header */}
               <div className="px-4 py-3 border-b border-navy-700/50 flex items-center justify-between bg-navy-950/50">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-emergency-500 animate-pulse" />
+                  <div className="w-2 h-2 rounded-full bg-[#EF4444] animate-[pulse-glow_2s_ease-in-out_infinite]" />
                   <span className="text-xs font-bold text-navy-200 tracking-wider">ACTIVE SOS: EMG-8492</span>
                 </div>
-                <span className="text-[10px] bg-emergency-500/20 text-emergency-400 px-2 py-1 rounded font-mono font-bold">CODE RED</span>
+                <span className="text-[10px] bg-[#EF4444]/15 border border-[#EF4444] text-[#EF4444] px-2 py-1 rounded font-mono font-bold flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#EF4444] animate-[pulse-glow_2s_ease-in-out_infinite]" />CODE RED</span>
               </div>
               
               {/* Map concept */}
@@ -169,25 +191,30 @@ export function LandingPage() {
                 
                 {/* Route line */}
                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 400 240">
-                  <path d="M 50 180 C 150 180, 150 60, 350 60" fill="none" stroke="#0ea5e9" strokeWidth="4" strokeDasharray="8 4" className="opacity-50" />
-                  <path d="M 50 180 C 150 180, 150 60, 200 120" fill="none" stroke="#10b981" strokeWidth="4" />
+                  <path d="M 50 180 C 150 180, 150 60, 350 60" fill="none" stroke="#22C55E" strokeWidth="4" className="opacity-20" />
+                  <path d="M 50 180 C 150 180, 150 60, 350 60" fill="none" stroke="#EF4444" strokeWidth="4" strokeDasharray="8 8" className="animate-[dash_0.5s_linear_infinite]" />
                 </svg>
 
                 {/* Markers */}
-                <div className="absolute top-[170px] left-[40px] w-5 h-5 bg-emerald-500 rounded-full border-2 border-white shadow-[0_0_15px_rgba(16,185,129,0.6)] flex items-center justify-center text-[10px]">🚑</div>
-                <div className="absolute top-[50px] left-[340px] w-5 h-5 bg-blue-500 rounded-full border-2 border-white shadow-[0_0_15px_rgba(59,130,246,0.6)] flex items-center justify-center text-[10px]">🏥</div>
+                <div 
+                  className="absolute w-6 h-6 bg-[#EF4444] rounded-full border-2 border-white shadow-[0_0_15px_rgba(239,68,68,0.6)] flex items-center justify-center text-white"
+                  style={{ offsetPath: 'path("M 50 180 C 150 180, 150 60, 350 60")', animation: 'move-along-path 5s linear infinite' }}
+                >
+                  <Ambulance size={14} strokeWidth={2} />
+                </div>
+                <div className="absolute top-[50px] left-[340px] w-6 h-6 bg-[#22C55E] rounded-full border-2 border-white shadow-[0_0_15px_rgba(34,197,94,0.6)] flex items-center justify-center text-white"><Building2 size={14} strokeWidth={2} /></div>
                 
                 {/* Status popup */}
-                <div className="absolute top-[100px] left-[80px] bg-navy-900 border border-navy-700 rounded-lg p-2 shadow-xl">
+                <div className="absolute top-[100px] left-[80px] bg-navy-900 border border-navy-700 rounded-lg p-2 shadow-xl animate-[float_4s_ease-in-out_infinite]">
                   <p className="text-[10px] text-navy-400 font-bold mb-1">AMBULANCE A-104</p>
                   <div className="flex gap-4">
                     <div>
                       <p className="text-[9px] text-navy-500">ETA</p>
-                      <p className="text-xs font-mono font-bold text-white">08:42</p>
+                      <p className="text-xs font-mono font-bold text-white animate-[number-flicker_3s_infinite]">08:42</p>
                     </div>
                     <div>
                       <p className="text-[9px] text-navy-500">DIST</p>
-                      <p className="text-xs font-mono font-bold text-white">4.8 KM</p>
+                      <p className="text-xs font-mono font-bold text-white animate-[number-flicker_3s_infinite_1.5s]">4.8 KM</p>
                     </div>
                   </div>
                 </div>
@@ -195,44 +222,43 @@ export function LandingPage() {
 
               {/* Status footer */}
               <div className="grid grid-cols-3 divide-x divide-navy-700/50 bg-navy-900/50">
-                <div className="p-3 text-center">
+                <div className="p-3 text-center opacity-0 animate-[fade-in_0.5s_ease-out_forwards]" style={{ animationDelay: '0.2s' }}>
                   <p className="text-[10px] text-navy-400 uppercase font-bold">Traffic</p>
-                  <p className="text-xs text-emerald-400 font-bold mt-0.5">CLEARED</p>
+                  <p className="text-xs text-[#22C55E] font-bold mt-0.5 flex items-center justify-center gap-1"><svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" /></svg> CLEARED</p>
                 </div>
-                <div className="p-3 text-center">
+                <div className="p-3 text-center opacity-0 animate-[fade-in_0.5s_ease-out_forwards]" style={{ animationDelay: '0.6s' }}>
                   <p className="text-[10px] text-navy-400 uppercase font-bold">Hospital</p>
-                  <p className="text-xs text-blue-400 font-bold mt-0.5">NOTIFIED</p>
+                  <p className="text-xs text-[#0EA5E9] font-bold mt-0.5 flex items-center justify-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#0EA5E9]" /> NOTIFIED</p>
                 </div>
-                <div className="p-3 text-center">
+                <div className="p-3 text-center opacity-0 animate-[fade-in_0.5s_ease-out_forwards]" style={{ animationDelay: '1.0s' }}>
                   <p className="text-[10px] text-navy-400 uppercase font-bold">Route</p>
-                  <p className="text-xs text-cyan-400 font-bold mt-0.5">OPTIMIZED</p>
+                  <p className="text-xs text-[#F59E0B] font-bold mt-0.5 flex items-center justify-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-[#F59E0B] animate-[pulse-glow_2s_ease-in-out_infinite]" /> OPTIMIZED</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </section>
+        {/* ── IMPACT STRIP ── */}
+        <div className="absolute bottom-0 left-0 right-0 bg-navy-900/80 backdrop-blur-md border-t border-navy-800 py-4 z-20 shadow-[0_-10px_30px_rgba(0,0,0,0.3)] hidden md:block">
+          <div className="max-w-7xl mx-auto px-6">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+              <div className="flex items-center gap-3 justify-center">
+                <span className="text-xs font-bold text-white tracking-widest uppercase">REAL-TIME COORDINATION</span>
+              </div>
+              
+              <div className="hidden md:flex items-center gap-3 text-navy-400 font-medium text-xs">
+                <span className="text-white">Ambulance</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <span className="text-white">Traffic Response</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                <span className="text-white">Hospital</span>
+              </div>
 
-      {/* ── IMPACT STRIP ── */}
-      <section className="bg-navy-900/80 border-y border-navy-800 py-6 relative z-20 shadow-lg">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
-            <div className="flex items-center gap-3 justify-center">
-              <span className="text-sm font-bold text-white tracking-widest uppercase">REAL-TIME COORDINATION</span>
-            </div>
-            
-            <div className="hidden md:flex items-center gap-4 text-navy-400 font-medium text-sm">
-              <span className="text-white">Ambulance</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              <span className="text-white">Traffic Response</span>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              <span className="text-white">Hospital</span>
-            </div>
-
-            <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-2 text-xs font-semibold text-cyan-400">
-              <span className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Location Visibility</span>
-              <span className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Route Optimization</span>
-              <span className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Hospital Coordination</span>
+              <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[11px] font-semibold text-cyan-400">
+                <span className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Location Visibility</span>
+                <span className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Route Optimization</span>
+                <span className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-cyan-400" /> Hospital Coordination</span>
+              </div>
             </div>
           </div>
         </div>
@@ -291,7 +317,7 @@ export function LandingPage() {
               {/* Diagram */}
               <div className="flex flex-col gap-4">
                 <div className="bg-navy-900 p-4 rounded-xl border border-navy-700 flex items-center justify-center gap-3">
-                  <span className="text-2xl">🚑</span>
+                  <div className="p-2 rounded-[12px] bg-[rgba(239,68,68,0.12)] flex items-center justify-center"><Ambulance size={24} strokeWidth={1.5} color="#EF4444" /></div>
                   <span className="font-bold text-white">Ambulance</span>
                 </div>
                 
@@ -310,11 +336,11 @@ export function LandingPage() {
                 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="bg-navy-900 p-4 rounded-xl border border-navy-700 flex flex-col items-center justify-center gap-2">
-                    <span className="text-2xl">🚦</span>
+                    <div className="p-2 rounded-[12px] bg-[rgba(14,165,233,0.12)] flex items-center justify-center"><ShieldAlert size={24} strokeWidth={1.5} color="#0EA5E9" /></div>
                     <span className="font-bold text-white text-sm">Traffic Control</span>
                   </div>
                   <div className="bg-navy-900 p-4 rounded-xl border border-navy-700 flex flex-col items-center justify-center gap-2">
-                    <span className="text-2xl">🏥</span>
+                    <div className="p-2 rounded-[12px] bg-[rgba(34,197,94,0.12)] flex items-center justify-center"><Building2 size={24} strokeWidth={1.5} color="#22C55E" /></div>
                     <span className="font-bold text-white text-sm">Hospital ER</span>
                   </div>
                 </div>
@@ -520,7 +546,6 @@ export function LandingPage() {
             <ul className="space-y-3 text-sm text-navy-400">
               <li><button onClick={() => navigate('/login')} className="hover:text-white transition-colors">Sign In</button></li>
               <li><button onClick={() => navigate('/register')} className="hover:text-white transition-colors">Get Started</button></li>
-              <li><button onClick={() => navigate('/showcase')} className="hover:text-white transition-colors">UI Components</button></li>
             </ul>
           </div>
         </div>

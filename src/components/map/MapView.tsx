@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, useMap, Circle, CircleMarker } from 'react-leaflet';
+import type { LatLngBoundsExpression } from 'leaflet';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
 interface MapViewProps {
@@ -10,6 +12,10 @@ interface MapViewProps {
   showControls?: boolean;
   showLiveLocation?: boolean;
   followLiveLocation?: boolean;
+  /** When set, the map will automatically fit to these bounds. */
+  fitBounds?: LatLngBoundsExpression | null;
+  /** Padding for fitBounds. Accounts for sidebar overlap. */
+  fitBoundsPadding?: [number, number];
 }
 
 /* ── Live Location Tracker (blue pulsing dot + accuracy circle) ── */
@@ -114,6 +120,46 @@ function MapAutoCenter({ center }: { center: [number, number] }) {
   return null;
 }
 
+/* ── FitBounds Controller ── */
+function FitBoundsController({
+  bounds,
+  padding = [60, 60],
+}: {
+  bounds: LatLngBoundsExpression | null;
+  padding?: [number, number];
+}) {
+  const map = useMap();
+  const lastBoundsRef = useRef<string>('');
+
+  useEffect(() => {
+    if (!bounds) return;
+
+    // Create a Leaflet bounds object to validate it
+    let leafletBounds: L.LatLngBounds;
+    try {
+      leafletBounds = L.latLngBounds(bounds as any);
+      if (!leafletBounds.isValid()) return;
+    } catch {
+      return;
+    }
+
+    // Stringify to avoid re-fitting the exact same bounds
+    const boundsKey = `${leafletBounds.getSouth()},${leafletBounds.getWest()},${leafletBounds.getNorth()},${leafletBounds.getEast()}`;
+    if (boundsKey === lastBoundsRef.current) return;
+    lastBoundsRef.current = boundsKey;
+
+    map.fitBounds(leafletBounds, {
+      paddingTopLeft: [padding[0], padding[1]],
+      paddingBottomRight: [40, 40],
+      maxZoom: 16,
+      animate: true,
+      duration: 0.8,
+    });
+  }, [bounds, padding, map]);
+
+  return null;
+}
+
 /* ── Recenter Control ── */
 function RecenterButton({ center }: { center: [number, number] }) {
   const map = useMap();
@@ -165,6 +211,8 @@ export function MapView({
   showControls = true,
   showLiveLocation = true,
   followLiveLocation = false,
+  fitBounds: fitBoundsProp = null,
+  fitBoundsPadding = [60, 60],
 }: MapViewProps) {
   const [showLegend, setShowLegend] = useState(false);
 
@@ -185,16 +233,19 @@ export function MapView({
           />
         ) : (
           <TileLayer
-            url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
         )}
 
-        {/* Auto-center map when center prop changes */}
-        <MapAutoCenter center={center} />
+        {/* Auto-center map when center prop changes (only if no fitBounds) */}
+        {!fitBoundsProp && <MapAutoCenter center={center} />}
+
+        {/* Fit to bounds when provided (e.g. hospital selection) */}
+        {fitBoundsProp && <FitBoundsController bounds={fitBoundsProp} padding={fitBoundsPadding} />}
 
         {/* Live GPS blue dot */}
-        {showLiveLocation && <LiveLocationTracker follow={followLiveLocation} />}
+        {showLiveLocation && <LiveLocationTracker follow={followLiveLocation && !fitBoundsProp} />}
 
         {children}
 

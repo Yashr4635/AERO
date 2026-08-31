@@ -12,7 +12,8 @@ export const aiService = {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error('Not authenticated');
 
-    const response = await fetch('http://localhost:3001/api/ai/chat', {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
+    const response = await fetch(`${apiUrl}/ai/chat`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

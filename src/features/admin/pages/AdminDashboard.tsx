@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Ambulance, ShieldAlert, AlertTriangle, Clock } from 'lucide-react';
 import { AppShell } from '../../../components/layout/AppShell';
 import { PageHeader } from '../../../components/layout/PageHeader';
 import { Card } from '../../../components/ui/Card';
@@ -28,11 +29,41 @@ export function AdminDashboard() {
 
   useEffect(() => {
     analyticsService.getDashboardOverview().then(setStats);
-    setEmergencies(realtimeService.getAllEmergencies());
+    
+    const unsubEmergency = realtimeService.on('incidents_updated', (incidents: any[]) => {
+      // Map database format to Emergency format for UI (adapter)
+      const mappedEmergencies = incidents.map(i => ({
+        id: i.id,
+        status: i.status === 'active' ? 'ACTIVE' : (i.status === 'resolved' || i.status === 'completed' ? 'COMPLETED' : i.status),
+        priority: i.priority,
+        category: i.incident_type,
+        ambulanceId: i.ambulance_id,
+        ambulanceDisplayName: i.ambulance_id,
+        vehicleNumber: i.ambulance_id,
+        currentSpeedKmH: i.current_speed,
+        route: {
+          polyline: i.route_geometry,
+          distanceMeters: i.route_distance_meters,
+          etaSeconds: i.route_duration_seconds,
+        },
+        patient: {
+          name: 'Emergency Patient',
+          category: i.incident_type,
+          chiefComplaint: i.description || 'Emergency Dispatch',
+          vitals: { heartRate: 114, bloodPressure: '150/90', spo2: 92, respiratoryRate: 22, gcsScore: 14 }
+        },
+        hospital: {
+          name: i.destination_hospital
+        }
+      }));
 
-    const unsubEmergency = realtimeService.on('emergency_status', () => {
-      analyticsService.getDashboardOverview().then(setStats);
-      setEmergencies(realtimeService.getAllEmergencies());
+      setEmergencies(mappedEmergencies as any);
+      
+      // Update basic stats dynamically
+      setStats(prev => ({
+        ...prev,
+        activeEmergencies: incidents.filter(i => i.status === 'active').length
+      }));
     });
 
     return () => {
@@ -45,10 +76,10 @@ export function AdminDashboard() {
   };
 
   const statCards = [
-    { label: 'Active Emergencies', value: stats.activeEmergencies, variant: 'emergency' as const, icon: '🚨' },
-    { label: 'Fleet Online', value: `${stats.onlineAmbulances} Units`, variant: 'info' as const, icon: '🚑' },
-    { label: 'Police Coverage', value: `${stats.availablePolice} Posts`, variant: 'warning' as const, icon: '👮' },
-    { label: 'Avg Response Time', value: `${stats.avgResponseTimeMins}m`, variant: 'success' as const, icon: '⏱️' },
+    { label: 'Active Emergencies', value: stats.activeEmergencies, variant: 'emergency' as const, icon: <AlertTriangle size={16} className="text-[#EF4444]" /> },
+    { label: 'Fleet Online', value: `${stats.onlineAmbulances} Units`, variant: 'info' as const, icon: <Ambulance size={16} className="text-[#0EA5E9]" /> },
+    { label: 'Police Coverage', value: `${stats.availablePolice} Posts`, variant: 'warning' as const, icon: <ShieldAlert size={16} className="text-[#F59E0B]" /> },
+    { label: 'Avg Response Time', value: `${stats.avgResponseTimeMins}m`, variant: 'success' as const, icon: <Clock size={16} className="text-[#22C55E]" /> },
   ];
 
   const filteredEmergencies = emergencies.filter(emg => {

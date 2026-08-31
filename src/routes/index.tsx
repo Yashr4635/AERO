@@ -19,6 +19,10 @@ import { ComponentShowcase } from '../pages/ComponentShowcase';
 import { NotFoundPage } from '../pages/NotFoundPage';
 import { AIAssistant } from '../features/ai/components/AIAssistant';
 
+import { RequestAmbulance } from '../features/patient/pages/RequestAmbulance';
+import { TrackAmbulance } from '../features/patient/pages/TrackAmbulance';
+import { HospitalDiscovery } from '../features/patient/pages/HospitalDiscovery';
+
 export function AppRoutes() {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -43,21 +47,21 @@ export function AppRoutes() {
     switch (userRole.toLowerCase()) {
       case 'ambulance_operator':
       case 'ambulance':
-        navigate('/ambulance');
+        navigate('/command/driver');
         break;
       case 'traffic_operator':
       case 'police':
-        navigate('/police');
+        navigate('/command/traffic');
         break;
       case 'hospital_operator':
       case 'hospital':
-        navigate('/hospital');
+        navigate('/command/hospital');
         break;
       case 'admin':
-        navigate('/admin');
+        navigate('/command/admin');
         break;
       default:
-        navigate('/ambulance');
+        navigate('/command/driver');
     }
   };
 
@@ -98,10 +102,16 @@ export function AppRoutes() {
       <Route path="/register" element={<RegisterPage onRegister={handleLogin} />} />
       <Route path="/auth/callback" element={<AuthCallbackPage />} />
       <Route path="/showcase" element={<ComponentShowcase />} />
+      
+      {/* Patient Routes (Minimal Auth/Public) */}
+      <Route path="/request" element={<RequestAmbulance />} />
+      <Route path="/track/:id" element={<TrackAmbulance />} />
+      <Route path="/share/:id" element={<TrackAmbulance />} />
+      <Route path="/hospitals" element={<HospitalDiscovery />} />
 
-      {/* Ambulance Routes */}
+      {/* Command: Driver Routes */}
       <Route
-        path="/ambulance"
+        path="/command/driver"
         element={
           <ProtectedRoute allowedRoles={['AMBULANCE_OPERATOR', 'AMBULANCE']}>
             <AmbulanceDashboard />
@@ -109,7 +119,7 @@ export function AppRoutes() {
         }
       />
       <Route
-        path="/ambulance/emergency"
+        path="/command/driver/emergency"
         element={
           <ProtectedRoute allowedRoles={['AMBULANCE_OPERATOR', 'AMBULANCE']}>
             <AmbulanceDashboard />
@@ -117,9 +127,9 @@ export function AppRoutes() {
         }
       />
 
-      {/* Police Routes */}
+      {/* Command: Traffic Routes */}
       <Route
-        path="/police"
+        path="/command/traffic"
         element={
           <ProtectedRoute allowedRoles={['TRAFFIC_OPERATOR', 'POLICE']}>
             <PoliceDashboard />
@@ -127,7 +137,7 @@ export function AppRoutes() {
         }
       />
       <Route
-        path="/police/emergency/:id"
+        path="/command/traffic/emergency/:id"
         element={
           <ProtectedRoute allowedRoles={['TRAFFIC_OPERATOR', 'POLICE']}>
             <ActiveEmergencyDetails />
@@ -135,7 +145,7 @@ export function AppRoutes() {
         }
       />
       <Route
-        path="/police/alerts"
+        path="/command/traffic/alerts"
         element={
           <ProtectedRoute allowedRoles={['TRAFFIC_OPERATOR', 'POLICE']}>
             <PoliceDashboard />
@@ -143,9 +153,9 @@ export function AppRoutes() {
         }
       />
 
-      {/* Hospital ER Routes */}
+      {/* Command: Hospital Routes */}
       <Route
-        path="/hospital"
+        path="/command/hospital"
         element={
           <ProtectedRoute allowedRoles={['HOSPITAL_OPERATOR', 'HOSPITAL']}>
             <HospitalDashboard />
@@ -153,9 +163,9 @@ export function AppRoutes() {
         }
       />
 
-      {/* Admin Routes */}
+      {/* Command: Admin Routes */}
       <Route
-        path="/admin"
+        path="/command/admin"
         element={
           <ProtectedRoute allowedRoles={['ADMIN']}>
             <AdminDashboard />
@@ -163,7 +173,7 @@ export function AppRoutes() {
         }
       />
       <Route
-        path="/admin/analytics"
+        path="/command/admin/analytics"
         element={
           <ProtectedRoute allowedRoles={['ADMIN']}>
             <AdminAnalytics />

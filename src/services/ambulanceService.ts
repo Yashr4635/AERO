@@ -80,44 +80,82 @@ export const ambulanceService = {
 
     // Supabase Persistence
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not authenticated');
-
-    const priorityMapping: Record<string, string> = {
-      'CODE_RED': 'critical',
-      'CODE_YELLOW': 'high',
-      'CODE_GREEN': 'medium',
-    };
-    const pgPriority = priorityMapping[newEmergency.priority as string] || 'critical';
     
-    const { data, error } = await supabase.from('emergency_incidents').insert({
-      user_id: user.id,
-      incident_type: newEmergency.category,
-      priority: pgPriority,
-      status: 'active',
-      ambulance_id: newEmergency.ambulanceId,
-      latitude: startPos[0],
-      longitude: startPos[1],
-      destination_hospital: hospital.name,
-      destination_latitude: hospital.location.latitude,
-      destination_longitude: hospital.location.longitude,
-      eta_minutes: Math.round(routeInfo.etaSeconds / 60),
-      route_geometry: routeInfo.polyline,
-      route_distance_meters: routeInfo.distanceMeters,
-      route_duration_seconds: routeInfo.etaSeconds,
-      current_latitude: startPos[0],
-      current_longitude: startPos[1],
-      current_speed: 0,
-      description: newEmergency.patient?.chiefComplaint || 'Emergency Request'
-    }).select().single();
-    
-    if (error || !data) {
-      console.error('Supabase insert failed:', error);
-      throw new Error(`Failed to create emergency incident: ${error?.message}`);
+    if (user) {
+      const priorityMapping: Record<string, string> = {
+        'CODE_RED': 'critical',
+        'CODE_YELLOW': 'high',
+        'CODE_GREEN': 'medium',
+      };
+      const pgPriority = priorityMapping[newEmergency.priority as string] || 'critical';
+      
+      const { data, error } = await supabase.from('emergency_incidents').insert({
+        user_id: user.id,
+        incident_type: newEmergency.category,
+        priority: pgPriority,
+        status: 'active',
+        ambulance_id: newEmergency.ambulanceId,
+        latitude: startPos[0],
+        longitude: startPos[1],
+        destination_hospital: hospital.name,
+        destination_latitude: hospital.location.latitude,
+        destination_longitude: hospital.location.longitude,
+        eta_minutes: Math.round((routeInfo.etaSeconds || 300) / 60),
+        route_geometry: routeInfo.polyline,
+        route_distance_meters: routeInfo.distanceMeters,
+        route_duration_seconds: routeInfo.etaSeconds,
+        current_latitude: startPos[0],
+        current_longitude: startPos[1],
+        current_speed: 0,
+        description: newEmergency.patient?.chiefComplaint || 'Emergency Request'
+      }).select().single();
+      
+      if (error || !data) {
+        console.error('Supabase insert failed:', error);
+      } else {
+        newEmergency.id = data.id;
+      }
+    } else {
+      console.warn('User not authenticated, skipping DB persistence for prototype demo.');
     }
 
-    // Map the real DB ID back
-    newEmergency.id = data.id;
     return newEmergency;
+  },
+
+  async updateEmergencyLocation(
+    incidentId: string,
+    currentPos: [number, number],
+    speedKmH: number | null,
+    destination: [number, number],
+    shouldRecalculateRoute: boolean
+  ) {
+    let updates: any = {
+      current_latitude: currentPos[0],
+      current_longitude: currentPos[1],
+      current_speed: speedKmH || 0,
+      updated_at: new Date().toISOString()
+    };
+
+    if (shouldRecalculateRoute) {
+      try {
+        const routeInfo = await routingService.getLiveRoute(currentPos, destination);
+        updates.route_geometry = routeInfo.polyline;
+        updates.route_distance_meters = routeInfo.distanceMeters;
+        updates.route_duration_seconds = routeInfo.etaSeconds;
+        updates.eta_minutes = Math.round((routeInfo.etaSeconds || 300) / 60);
+      } catch (e) {
+        console.error("Failed to recalculate route during GPS update", e);
+      }
+    }
+
+    const { error } = await supabase
+      .from('emergency_incidents')
+      .update(updates)
+      .eq('id', incidentId);
+      
+    if (error) {
+      console.error('Failed to update emergency location in Supabase', error);
+    }
   },
 
   async triggerReroute(emergencyId: string, alternateHospital?: Hospital): Promise<Emergency> {
@@ -145,6 +183,17 @@ export const ambulanceService = {
       notes: 'Rerouted via live OSRM corridor.',
     };
 
+    // Update in Supabase
+    await supabase.from('emergency_incidents').update({
+      destination_hospital: targetHospital.name,
+      destination_latitude: targetHospital.location.latitude,
+      destination_longitude: targetHospital.location.longitude,
+      route_geometry: routeInfo.polyline,
+      route_distance_meters: routeInfo.distanceMeters,
+      route_duration_seconds: routeInfo.etaSeconds,
+      eta_minutes: Math.round((routeInfo.etaSeconds || 300) / 60),
+    }).eq('id', emergencyId);
+
     realtimeService.triggerEmergency(updated);
     return updated;
   },
@@ -162,13 +211,13 @@ export const ambulanceService = {
   },
 
   async cancelSOS(emergencyId: string) {
-    await delay(300);
+    await supabase.from('emergency_incidents').update({ status: 'cancelled' }).eq('id', emergencyId);
     realtimeService.updateEmergencyStatus(emergencyId, 'CANCELLED');
     return { success: true };
   },
 
   async completeSOS(emergencyId: string) {
-    await delay(300);
+    await supabase.from('emergency_incidents').update({ status: 'completed' }).eq('id', emergencyId);
     realtimeService.updateEmergencyStatus(emergencyId, 'COMPLETED');
     return { success: true };
   },

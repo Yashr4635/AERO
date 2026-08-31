@@ -28,7 +28,7 @@ export function RoutePolyline({
       <Polyline
         positions={positions}
         pathOptions={{
-          color: active ? '#ef4444' : '#94a3b8',
+          color: active ? '#ef4444' : '#22c55e',
           weight: 10,
           opacity: active ? 0.3 : 0.15,
           lineCap: 'round',
@@ -40,7 +40,7 @@ export function RoutePolyline({
       <Polyline
         positions={positions}
         pathOptions={{
-          color: active ? '#1e293b' : '#cbd5e1',
+          color: '#1e293b',
           weight: 6,
           opacity: 0.8,
           lineCap: 'round',
@@ -55,7 +55,7 @@ export function RoutePolyline({
             key={`congestion-${idx}`}
             positions={segment.polyline}
             pathOptions={{
-              color: congestionColors[segment.level] || '#06b6d4',
+              color: congestionColors[segment.level] || '#ef4444',
               weight: 4,
               opacity: 0.95,
               lineCap: 'round',
@@ -68,12 +68,13 @@ export function RoutePolyline({
         <Polyline
           positions={positions}
           pathOptions={{
-            color: active ? '#06b6d4' : '#64748b',
+            color: active ? '#ef4444' : '#22c55e',
             weight: 4,
-            opacity: active ? 0.95 : 0.6,
+            opacity: active ? 0.95 : 0.8,
             lineCap: 'round',
             lineJoin: 'round',
-            dashArray: active ? undefined : '6 10',
+            dashArray: active ? '8 8' : undefined,
+            className: active ? 'animate-[dash_1s_linear_infinite]' : undefined,
           }}
         />
       )}

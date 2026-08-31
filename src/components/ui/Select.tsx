@@ -12,6 +12,7 @@ interface SelectProps extends Omit<React.SelectHTMLAttributes<HTMLSelectElement>
   hint?: string;
   options: SelectOption[];
   placeholder?: string;
+  selectClassName?: string;
 }
 
 export function Select({
@@ -22,6 +23,7 @@ export function Select({
   placeholder = 'Select...',
   id,
   className = '',
+  selectClassName = '',
   ...props
 }: SelectProps) {
   const selectId = id || label?.toLowerCase().replace(/\s+/g, '-');
@@ -49,6 +51,7 @@ export function Select({
               ? 'border-emergency-500 focus:ring-emergency-500'
               : 'border-navy-600 hover:border-navy-500 focus:ring-info-500 focus:border-info-500'
             }
+            ${selectClassName}
           `}
           aria-invalid={error ? 'true' : undefined}
           aria-describedby={error ? `${selectId}-error` : hint ? `${selectId}-hint` : undefined}

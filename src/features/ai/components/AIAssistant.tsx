@@ -185,10 +185,10 @@ ETA: ${active.route?.etaSeconds ? Math.floor(active.route.etaSeconds/60) + ' min
   };
 
   const quickActions = [
-    '🚑 Summarize my current incident',
-    '🏥 Find the nearest suitable hospital',
-    '🚦 What traffic risks should I watch?',
-    '⚠️ What should I do for this emergency?'
+    'Summarize my current incident',
+    'Find the nearest suitable hospital',
+    'What traffic risks should I watch?',
+    'What should I do for this emergency?'
   ];
 
   return (

@@ -57,18 +57,34 @@ interface StatusBadgeProps {
   className?: string;
 }
 
-const statusConfig: Record<EmergencyStatus, { variant: BadgeVariant; label: string }> = {
-  PENDING: { variant: 'warning', label: 'PENDING' },
-  ACCEPTED: { variant: 'info', label: 'ACCEPTED' },
-  ACTIVE: { variant: 'emergency', label: 'ACTIVE' },
-  COMPLETED: { variant: 'success', label: 'COMPLETED' },
-  CANCELLED: { variant: 'neutral', label: 'CANCELLED' },
+const statusConfig: Record<EmergencyStatus, { variant: BadgeVariant; label: string; iconType: 'pulse' | 'check' | 'static' }> = {
+  PENDING: { variant: 'warning', label: 'PENDING', iconType: 'pulse' },
+  ACTIVE: { variant: 'warning', label: 'ACTIVE', iconType: 'pulse' },
+  ACCEPTED: { variant: 'info', label: 'ACCEPTED', iconType: 'static' },
+  CANCELLED: { variant: 'info', label: 'CANCELLED', iconType: 'static' },
+  COMPLETED: { variant: 'success', label: 'COMPLETED', iconType: 'check' },
 };
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
   const config = statusConfig[status];
+  
+  const renderIcon = () => {
+    if (config.iconType === 'check') {
+      return (
+        <svg className="w-3 h-3 text-success-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      );
+    }
+    if (config.iconType === 'pulse') {
+      return <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColorClasses[config.variant]} animate-pulse`} aria-hidden="true" />;
+    }
+    return <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColorClasses[config.variant]}`} aria-hidden="true" />;
+  };
+
   return (
-    <Badge variant={config.variant} size="md" dot className={className}>
+    <Badge variant={config.variant} size="md" className={className}>
+      {renderIcon()}
       {config.label}
     </Badge>
   );

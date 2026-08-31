@@ -11,7 +11,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-info-600 text-white hover:bg-info-700 active:bg-info-800 focus-visible:ring-info-500',
+    'bg-gradient-to-br from-[#EF4444] to-[#F97316] text-[#F8FAFC] hover:from-[#dc2626] hover:to-[#ea580c] focus-visible:ring-[#EF4444] border-none',
   emergency:
     'bg-emergency-600 text-white hover:bg-emergency-700 active:bg-emergency-800 focus-visible:ring-emergency-500 shadow-emergency',
   success:
@@ -21,7 +21,7 @@ const variantClasses: Record<ButtonVariant, string> = {
   ghost:
     'bg-transparent text-navy-200 hover:bg-navy-800 active:bg-navy-700 focus-visible:ring-navy-500',
   outline:
-    'bg-transparent text-navy-200 border border-navy-600 hover:bg-navy-800 active:bg-navy-700 focus-visible:ring-navy-500',
+    'bg-transparent text-info-500 border border-info-500 hover:bg-info-500/10 active:bg-info-500/20 focus-visible:ring-info-500',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -48,7 +48,7 @@ export function Button({
     <button
       className={`
         inline-flex items-center justify-center font-medium
-        transition-colors duration-150 cursor-pointer
+        transition-all duration-150 cursor-pointer active:scale-[0.98]
         focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-900
         disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
         ${variantClasses[variant]}
@@ -71,10 +71,12 @@ export function Button({
           <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" opacity="0.25" />
           <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round" />
         </svg>
-      ) : icon ? (
-        <span className="shrink-0" aria-hidden="true">{icon}</span>
-      ) : null}
-      {children}
+      ) : (
+        <>
+          {icon && <span className="shrink-0" aria-hidden="true">{icon}</span>}
+          {children}
+        </>
+      )}
     </button>
   );
 }

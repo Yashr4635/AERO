@@ -1,30 +1,11 @@
-/**
- * HospitalSearchPanel
- * Floating live hospital search on the map.
- * – Immediately loads real nearby hospitals via Overpass (within 15 km).
- * – Debounced text search via Nominatim.
- * – Results shown in a scrollable card below the search bar.
- */
-
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Marker, Popup, useMap } from 'react-leaflet';
+import { Building2, Search, X, ChevronRight } from 'lucide-react';
 import L from 'leaflet';
 import {
-  searchNearbyHospitals,
   searchHospitalsByName,
   type LiveHospital,
 } from '../../../services/hospitalSearchService';
-
-interface HospitalSearchPanelProps {
-  /** Driver's current GPS position */
-  userPos: [number, number] | null;
-  /** Called when user selects a hospital from search results */
-  onSelect: (hospital: LiveHospital) => void;
-  /** Which hospital is currently selected */
-  selectedHospitalId?: string;
-  /** Radius cap in metres — default 15000 */
-  radiusMeters?: number;
-}
 
 // Pin icon for search results
 function searchResultIcon(selected: boolean) {
@@ -44,82 +25,23 @@ function searchResultIcon(selected: boolean) {
   });
 }
 
+interface HospitalMapPinsProps {
+  hospitals: LiveHospital[];
+  selectedHospitalId?: string;
+  onSelect: (hospital: LiveHospital) => void;
+}
 
-
-export function HospitalSearchPanel({
-  userPos,
-  onSelect,
-  selectedHospitalId,
-  radiusMeters = 15000,
-}: HospitalSearchPanelProps) {
+export function HospitalMapPins({ hospitals, selectedHospitalId, onSelect }: HospitalMapPinsProps) {
   const map = useMap();
-  const [query, setQuery] = useState('');
-  const [hospitals, setHospitals] = useState<LiveHospital[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [mapPins, setMapPins] = useState<LiveHospital[]>([]);
-  const abortRef = useRef<AbortController | null>(null);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  // Load real nearby hospitals on mount / when GPS position becomes available
-  const loadNearby = useCallback(async () => {
-    if (!userPos) return;
-    abortRef.current?.abort();
-    abortRef.current = new AbortController();
-    setLoading(true);
-    try {
-      const results = await searchNearbyHospitals(userPos, radiusMeters, abortRef.current.signal);
-      setHospitals(results);
-      setMapPins(results.slice(0, 20)); // show up to 20 pins
-    } catch {
-      // Overpass timed out or offline — silent
-    } finally {
-      setLoading(false);
-    }
-  }, [userPos, radiusMeters]);
-
-  useEffect(() => {
-    loadNearby();
-  }, [loadNearby]);
-
-  // Debounced text search
-  useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current);
-    if (!query.trim()) {
-      loadNearby();
-      return;
-    }
-    debounceRef.current = setTimeout(async () => {
-      if (!userPos) return;
-      abortRef.current?.abort();
-      abortRef.current = new AbortController();
-      setLoading(true);
-      try {
-        const results = await searchHospitalsByName(query.trim(), userPos, abortRef.current.signal);
-        setHospitals(results);
-        setMapPins(results.slice(0, 20));
-      } catch {
-        // ignore abort
-      } finally {
-        setLoading(false);
-      }
-    }, 500);
-  }, [query, userPos, loadNearby]);
 
   const handleSelect = (h: LiveHospital) => {
     onSelect(h);
     map.flyTo([h.lat, h.lng], 15, { animate: true, duration: 1.2 });
-    setOpen(false);
-    setQuery('');
   };
-
-  const maxRadiusKm = radiusMeters / 1000;
 
   return (
     <>
-      {/* Map pins for search results */}
-      {mapPins.map(h => (
+      {hospitals.map(h => (
         <Marker
           key={h.id}
           position={[h.lat, h.lng]}
@@ -146,134 +68,156 @@ export function HospitalSearchPanel({
           </Popup>
         </Marker>
       ))}
+    </>
+  );
+}
 
-      {/* Floating search panel — absolute positioned over map */}
-      <div className="absolute top-14 left-3 z-[500] w-[320px] max-w-[calc(100vw-1.5rem)] pointer-events-auto">
+interface HospitalSidebarListProps {
+  userPos: [number, number] | null;
+  baseHospitals: LiveHospital[];
+  onSelect: (hospital: LiveHospital) => void;
+  selectedHospitalId?: string;
+  radiusMeters: number;
+  onExtendRadius: () => void;
+  onSearchUpdate: (hospitals: LiveHospital[]) => void;
+}
 
-        {/* Search bar */}
-        <div className={`flex items-center gap-2 bg-white shadow-lg border rounded-2xl px-3 py-2 transition-all ${open ? 'border-blue-400 ring-2 ring-blue-200' : 'border-gray-200'}`}>
+export function HospitalSidebarList({
+  userPos,
+  baseHospitals,
+  onSelect,
+  selectedHospitalId,
+  radiusMeters,
+  onExtendRadius,
+  onSearchUpdate,
+}: HospitalSidebarListProps) {
+  const [query, setQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<LiveHospital[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Debounced text search
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    if (!query.trim()) {
+      setSearchResults(null);
+      onSearchUpdate(baseHospitals);
+      return;
+    }
+    
+    debounceRef.current = setTimeout(async () => {
+      if (!userPos) return;
+      abortRef.current?.abort();
+      abortRef.current = new AbortController();
+      setLoading(true);
+      try {
+        const results = await searchHospitalsByName(query.trim(), userPos, abortRef.current.signal);
+        setSearchResults(results);
+        onSearchUpdate(results);
+      } catch {
+        // ignore abort
+      } finally {
+        setLoading(false);
+      }
+    }, 500);
+  }, [query, userPos, baseHospitals, onSearchUpdate]);
+
+  const displayList = searchResults !== null ? searchResults : baseHospitals;
+  const maxRadiusKm = radiusMeters / 1000;
+
+  return (
+    <div className="flex flex-col h-full overflow-hidden w-full relative">
+      {/* Search Bar */}
+      <div className="p-4 border-b border-navy-800 bg-navy-900/50 shrink-0">
+        <div className="flex items-center gap-2 bg-navy-950 border border-navy-800 rounded-lg px-3 py-2.5 focus-within:border-blue-500/50 focus-within:ring-1 focus-within:ring-blue-500/50 transition-all">
           {loading ? (
-            <svg className="animate-spin w-4 h-4 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="none">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
-            </svg>
+            <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin shrink-0"></div>
           ) : (
-            <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
-            </svg>
+            <Search className="w-4 h-4 text-navy-400 shrink-0" />
           )}
           <input
-            ref={inputRef}
             type="text"
             value={query}
             onChange={e => setQuery(e.target.value)}
-            onFocus={() => setOpen(true)}
-            placeholder={`Search hospitals within ${maxRadiusKm} km…`}
-            className="flex-1 text-xs text-gray-800 placeholder-gray-400 bg-transparent outline-none"
+            placeholder={`Search within ${maxRadiusKm} km…`}
+            className="flex-1 text-sm text-white placeholder-navy-500 bg-transparent outline-none"
           />
           {query && (
             <button
-              onClick={() => { setQuery(''); inputRef.current?.focus(); }}
-              className="text-gray-400 hover:text-gray-600 cursor-pointer shrink-0"
+              onClick={() => setQuery('')}
+              className="text-navy-400 hover:text-white cursor-pointer shrink-0"
             >
-              <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/>
-              </svg>
-            </button>
-          )}
-          {open && (
-            <button
-              onClick={() => setOpen(false)}
-              className="text-gray-400 hover:text-gray-600 cursor-pointer shrink-0 text-[10px] font-medium"
-            >
-              ESC
+              <X className="w-4 h-4" />
             </button>
           )}
         </div>
+      </div>
 
-        {/* Results dropdown */}
-        {open && (
-          <div className="mt-1.5 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden max-h-[340px] flex flex-col">
-            {/* Header */}
-            <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between bg-gray-50/80">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
-                {loading ? 'Searching live map data…' : `${hospitals.length} hospitals within ${maxRadiusKm} km`}
-              </span>
-              {!loading && hospitals.length > 0 && (
-                <span className="text-[10px] text-blue-500 font-medium">📡 Live Map Data</span>
-              )}
+      {/* List */}
+      <div className="flex-1 overflow-y-auto min-h-0 bg-navy-950/30">
+        {displayList.length === 0 && !loading && (
+          <div className="flex flex-col items-center justify-center h-full p-6 text-center">
+            <div className="w-12 h-12 bg-navy-900 rounded-full flex items-center justify-center mb-4 border border-navy-800">
+              <Building2 className="w-6 h-6 text-navy-500" />
             </div>
-
-            {/* List */}
-            <div className="overflow-y-auto flex-1">
-              {hospitals.length === 0 && !loading && (
-                <div className="flex flex-col items-center justify-center py-8 text-center px-4">
-                  <span className="text-2xl mb-2">🏥</span>
-                  <p className="text-xs text-gray-500 font-medium">No hospitals found nearby</p>
-                  <p className="text-[10px] text-gray-400 mt-1">Try a different search or extend the radius</p>
-                </div>
-              )}
-              {hospitals.map((h, i) => {
-                const isSelected = h.id === selectedHospitalId;
-                const distKm = h.distanceMeters / 1000;
-                const urgencyColor = distKm < 3 ? 'text-emerald-600' : distKm < 8 ? 'text-amber-600' : 'text-blue-600';
-                return (
-                  <div key={h.id} className="flex flex-col border-b border-gray-50 last:border-0">
-                    <button
-                      onClick={() => handleSelect(h)}
-                      className={`w-full text-left px-3 py-2.5 flex items-start gap-2.5 hover:bg-blue-50 transition-colors cursor-pointer ${
-                        isSelected ? 'bg-emerald-50 border-emerald-100' : ''
-                      }`}
-                    >
-                      {/* Rank badge */}
-                      <div className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                        i === 0 ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-500'
-                      }`}>
-                        {i === 0 ? '★' : i + 1}
-                      </div>
-
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-1">
-                          <p className={`text-xs font-bold leading-tight truncate ${isSelected ? 'text-emerald-700' : 'text-gray-800'}`}>
-                            {h.name}
-                          </p>
-                          <span className={`text-[11px] font-mono font-bold shrink-0 ${urgencyColor}`}>
-                            {h.distanceLabel}
-                          </span>
-                        </div>
-                        {h.address && (
-                          <p className="text-[10px] text-gray-400 mt-0.5 leading-tight truncate">{h.address}</p>
-                        )}
-                        {h.businessStatus && (
-                          <p className={`text-[10px] mt-0.5 font-bold ${h.businessStatus === 'OPERATIONAL' ? 'text-emerald-500' : 'text-amber-500'}`}>
-                            {h.businessStatus.replace('_', ' ')}
-                          </p>
-                        )}
-                        {h.phone && (
-                          <p className="text-[10px] text-blue-500 mt-0.5 font-mono">{h.phone}</p>
-                        )}
-                      </div>
-
-                      {isSelected && (
-                        <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
-                        </svg>
-                      )}
-                    </button>
-                    {h.googleMapsUri && (
-                      <div className="px-3 pb-2 pt-1 flex justify-end">
-                         <a href={h.googleMapsUri} target="_blank" rel="noreferrer" className="text-[10px] font-bold text-blue-500 hover:text-blue-600 underline">
-                           [ OPEN IN GOOGLE MAPS ]
-                         </a>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+            <h3 className="text-sm font-bold text-white mb-1">No hospitals found</h3>
+            <p className="text-xs text-navy-400 mb-6 max-w-[200px]">
+              We couldn't find any emergency facilities within {maxRadiusKm} km.
+            </p>
+            <button
+              onClick={onExtendRadius}
+              className="text-xs font-bold bg-navy-800 text-white hover:bg-navy-700 hover:text-white px-4 py-2 rounded-lg border border-navy-700 transition-colors"
+            >
+              Extend Search Radius
+            </button>
           </div>
         )}
+
+        {displayList.map((h, i) => {
+          const isSelected = h.id === selectedHospitalId;
+          const distKm = h.distanceMeters / 1000;
+          const urgencyColor = distKm < 3 ? 'text-emerald-400' : distKm < 8 ? 'text-amber-400' : 'text-blue-400';
+          
+          return (
+            <button
+              key={h.id}
+              onClick={() => onSelect(h)}
+              className={`w-full text-left px-4 py-3 flex items-start gap-3 border-b border-navy-800/50 hover:bg-navy-900 transition-colors cursor-pointer ${
+                isSelected ? 'bg-navy-800/80 border-l-2 border-l-emerald-500' : 'border-l-2 border-l-transparent'
+              }`}
+            >
+              {/* Rank / Icon */}
+              <div className={`mt-0.5 w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                i === 0 && !searchResults ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-navy-800 text-navy-400 border border-navy-700'
+              }`}>
+                {i === 0 && !searchResults ? '★' : i + 1}
+              </div>
+
+              <div className="flex-1 min-w-0">
+                <div className="flex items-start justify-between gap-2">
+                  <h4 className={`text-sm font-bold leading-tight truncate ${isSelected ? 'text-emerald-400' : 'text-gray-100'}`}>
+                    {h.name}
+                  </h4>
+                  <span className={`text-[11px] font-mono font-bold shrink-0 bg-navy-900 px-1.5 py-0.5 rounded border border-navy-800 ${urgencyColor}`}>
+                    {h.distanceLabel}
+                  </span>
+                </div>
+                {h.address && (
+                  <p className="text-[11px] text-navy-400 mt-1 leading-tight line-clamp-2">{h.address}</p>
+                )}
+                {h.phone && (
+                  <p className="text-[10px] text-blue-400 mt-1.5 font-mono">{h.phone}</p>
+                )}
+              </div>
+              
+              <div className="shrink-0 flex items-center justify-center self-center pl-2">
+                <ChevronRight className={`w-4 h-4 ${isSelected ? 'text-emerald-500' : 'text-navy-600'}`} />
+              </div>
+            </button>
+          );
+        })}
       </div>
-    </>
+    </div>
   );
 }

@@ -25,7 +25,9 @@ export function AccountMenu({ userName, userRole }: AccountMenuProps) {
   }, []);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    // Use 'local' scope so this tab's logout does NOT revoke the server-side
+    // refresh token, which would invalidate sessions in OTHER tabs.
+    await supabase.auth.signOut({ scope: 'local' });
     navigate('/login', { replace: true });
   };
 

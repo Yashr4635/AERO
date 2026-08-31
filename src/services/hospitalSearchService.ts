@@ -1,3 +1,4 @@
+import { supabase } from '../lib/supabase';
 /**
  * AERO Hospital Search Service
  * Uses Google Places API (New) via proxy to find real emergency
@@ -51,8 +52,7 @@ export async function searchNearbyHospitals(
   // 1. Try Google Places API Proxy
   try {
     console.log(`[AERO HOSPITAL] Querying Google Places API proxy for hospitals...`);
-    // Need auth token for backend proxy
-    const session = JSON.parse(localStorage.getItem('sb-yozhchqmslptfysuoxbw-auth-token') || '{}');
+    const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token || '';
 
     const res = await fetch('http://localhost:3001/api/places/hospitals', {

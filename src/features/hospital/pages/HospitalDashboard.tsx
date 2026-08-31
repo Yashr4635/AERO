@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Ambulance, Building2 } from 'lucide-react';
 import { AppShell } from '../../../components/layout/AppShell';
 import { MapView, AmbulanceMarker, HospitalMarker, RoutePolyline } from '../../../components/map';
 import { Card } from '../../../components/ui/Card';
@@ -24,54 +25,60 @@ export function HospitalDashboard() {
   });
 
   useEffect(() => {
-    // Load hospital details (Bowring & Lady Curzon / Victoria)
+    // Load hospital details
     hospitalService.getHospitalState('HOSP-002').then(setHospital);
-    hospitalService.getIncomingEmergencies('HOSP-002').then((emergencies) => {
-      setIncomingEmergencies(emergencies);
-      if (emergencies.length > 0) {
-        setSelectedEmergency(emergencies[0]);
-        if (emergencies[0].hospitalPrep) {
-          setPrepState(emergencies[0].hospitalPrep);
+    
+    // Fallback if not loaded
+    const hospName = hospital?.name || 'Bowring & Lady Curzon Hospital';
+
+    const unsubscribeEmergency = realtimeService.on('incidents_updated', (incidents: any[]) => {
+      // Filter for incidents where destination is this hospital
+      const incoming = incidents.filter(i => 
+        (i.status === 'active' || i.status === 'ACCEPTED') && 
+        i.destination_hospital === hospName
+      );
+      
+      // Map database format to Emergency format for UI (adapter)
+      const mappedEmergencies = incoming.map(i => ({
+        id: i.id,
+        status: i.status === 'active' ? 'ACTIVE' : i.status,
+        priority: i.priority,
+        category: i.incident_type,
+        ambulanceId: i.ambulance_id,
+        ambulanceDisplayName: i.ambulance_id,
+        vehicleNumber: i.ambulance_id,
+        currentSpeedKmH: i.current_speed,
+        route: {
+          polyline: i.route_geometry,
+          distanceMeters: i.route_distance_meters,
+          etaSeconds: i.route_duration_seconds,
+        },
+        patient: {
+          name: 'Emergency Patient',
+          category: i.incident_type,
+          chiefComplaint: i.description || 'Incoming Emergency',
+          vitals: { heartRate: 114, bloodPressure: '150/90', spo2: 92, respiratoryRate: 22, gcsScore: 14 }
+        },
+        hospitalPrep: prepState
+      }));
+
+      setIncomingEmergencies(mappedEmergencies as any);
+
+      if (mappedEmergencies.length > 0) {
+        if (!selectedEmergency || !mappedEmergencies.find(e => e.id === selectedEmergency.id)) {
+          setSelectedEmergency(mappedEmergencies[0] as any);
+        } else {
+          // Update selected emergency with fresh coordinates/eta
+          const updated = mappedEmergencies.find(e => e.id === selectedEmergency.id);
+          if (updated) setSelectedEmergency(updated as any);
         }
       }
-    });
-
-    const unsubscribeEmergency = realtimeService.on('hospital_alert', (emergency: Emergency) => {
-      setIncomingEmergencies(prev => {
-        const filtered = prev.filter(e => e.id !== emergency.id);
-        if (emergency.status === 'ACTIVE' || emergency.status === 'ACCEPTED') {
-          return [emergency, ...filtered];
-        }
-        return filtered;
-      });
-
-      if (!selectedEmergency || selectedEmergency.id === emergency.id) {
-        setSelectedEmergency(emergency);
-        if (emergency.hospitalPrep) {
-          setPrepState(emergency.hospitalPrep);
-        }
-      }
-    });
-
-    const unsubscribeLocation = realtimeService.on('ambulance_location', (data: { ambulanceId: string; etaSeconds: number; speedKmH: number }) => {
-      setSelectedEmergency(prev => {
-        if (!prev || prev.ambulanceId !== data.ambulanceId) return prev;
-        return {
-          ...prev,
-          currentSpeedKmH: data.speedKmH,
-          route: {
-            ...prev.route!,
-            etaSeconds: data.etaSeconds,
-          },
-        };
-      });
     });
 
     return () => {
       unsubscribeEmergency();
-      unsubscribeLocation();
     };
-  }, []);
+  }, [hospital?.name, selectedEmergency?.id, prepState]);
 
   const handleTogglePrep = async (key: keyof HospitalPreparationState) => {
     if (!selectedEmergency) return;
@@ -170,8 +177,8 @@ export function HospitalDashboard() {
             {/* Floating Live Arrival Countdown Overlay */}
             {selectedEmergency && (
               <div className="absolute top-4 left-4 z-[400] bg-navy-900/95 backdrop-blur border border-emergency-500/50 rounded-xl p-3 shadow-emergency flex items-center gap-4">
-                <div className="w-10 h-10 rounded-lg bg-emergency-600/20 border border-emergency-500/40 flex items-center justify-center text-xl">
-                  🚑
+                <div className="w-10 h-10 rounded-lg bg-emergency-600/20 border border-emergency-500/40 flex items-center justify-center">
+                  <Ambulance size={20} className="text-[#EF4444]" />
                 </div>
                 <div>
                   <div className="flex items-center gap-2">
@@ -418,7 +425,7 @@ export function HospitalDashboard() {
           ) : (
             <Card>
               <div className="text-center py-10">
-                <span className="text-3xl block mb-2">🏥</span>
+                <div className="flex justify-center mb-4"><div className="w-16 h-16 rounded-2xl bg-[rgba(34,197,94,0.12)] flex items-center justify-center"><Building2 size={32} className="text-[#22C55E]" /></div></div>
                 <h3 className="text-sm font-bold text-navy-100">No Active Incoming Ambulance</h3>
                 <p className="text-xs text-navy-400 mt-1">
                   ER Team is on regular standby. When an ambulance triggers an SOS route to this hospital, full vitals and ETA telemetry will appear here.

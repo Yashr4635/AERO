@@ -24,3 +24,7 @@ dist-ssr
 *.sw?
 .env
 .env.local
+
+# Local / temporary files
+scratch/
+supabase/.temp/

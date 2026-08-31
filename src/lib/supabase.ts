@@ -28,11 +28,46 @@ const createMockSupabase = () => {
         eq: () => ({ order: async () => ({ data: [], error: notConfiguredError.error }) }),
         order: async () => ({ data: [], error: notConfiguredError.error })
       }),
-      insert: () => ({ select: () => ({ single: async () => ({ data: null, error: notConfiguredError.error }) }) })
-    })
+      insert: () => ({ select: () => ({ single: async () => ({ data: null, error: notConfiguredError.error }) }) }),
+      update: () => ({ eq: async () => ({ data: null, error: notConfiguredError.error }) }),
+    }),
+    channel: () => ({
+      on: () => ({ subscribe: () => ({ status: 'SUBSCRIBED' }) }),
+      subscribe: () => ({}),
+    }),
+    getChannels: () => [],
+    removeChannel: () => {},
   } as any;
 };
 
+/**
+ * Retrieve or generate a unique ID for the current browser tab.
+ */
+function getOrCreateTabId(): string {
+  if (typeof window === 'undefined') return 'server';
+  const TAB_ID_KEY = '__aero_tab_id__';
+  let tabId = window.sessionStorage.getItem(TAB_ID_KEY);
+  if (!tabId) {
+    tabId = `tab-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    window.sessionStorage.setItem(TAB_ID_KEY, tabId);
+  }
+  return tabId;
+}
+
+const tabId = getOrCreateTabId();
+
 export const supabase = isConfigured 
-  ? createClient(supabaseUrl, supabaseAnonKey) 
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        // This is the true fix: A unique storageKey per tab natively namespaces 
+        // both the sessionStorage keys AND the Supabase BroadcastChannel name,
+        // completely preventing cross-tab authentication interference.
+        storageKey: `aero-auth-${tabId}`,
+        storage: typeof window !== 'undefined' ? window.sessionStorage : undefined,
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true,
+      }
+    }) 
   : createMockSupabase();
+

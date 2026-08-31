@@ -119,51 +119,59 @@ app.post('/api/ai/chat', authenticateUser, async (req, res) => {
     );
 
     let currentConvId = conversationId;
+    let history = [];
 
-    // 1. Initialize Conversation if missing
-    if (!currentConvId) {
-      currentConvId = crypto.randomUUID();
-      const { error: convError } = await userSupabase
-        .from('ai_conversations')
-        .insert({
-          id: currentConvId,
-          title: `Chat ${new Date().toLocaleTimeString()}`,
-          user_id: req.user.id
-        });
+    try {
+      // 1. Initialize Conversation if missing
+      if (!currentConvId) {
+        currentConvId = crypto.randomUUID();
+        const { error: convError } = await userSupabase
+          .from('ai_conversations')
+          .insert({
+            id: currentConvId,
+            title: `Chat ${new Date().toLocaleTimeString()}`,
+            user_id: req.user.id
+          });
 
-      if (convError) {
-        console.error('Failed to create conversation:', convError);
-        return res.status(500).json({ error: 'Failed to initialize conversation in database.' });
+        if (convError) {
+          console.error('Failed to create conversation, proceeding without persistence:', convError);
+        }
       }
-    }
 
-    // 2. Save User Message
-    const userMessageId = crypto.randomUUID();
-    const { error: userMsgError } = await userSupabase
-      .from('ai_messages')
-      .insert({
-        id: userMessageId,
-        conversation_id: currentConvId,
-        user_id: req.user.id,
-        role: 'user',
-        content: message
-      });
+      // 2. Save User Message
+      if (currentConvId) {
+        const userMessageId = crypto.randomUUID();
+        const { error: userMsgError } = await userSupabase
+          .from('ai_messages')
+          .insert({
+            id: userMessageId,
+            conversation_id: currentConvId,
+            user_id: req.user.id,
+            role: 'user',
+            content: message
+          });
 
-    if (userMsgError) {
-      console.error('Failed to save user message:', userMsgError);
-      return res.status(500).json({ error: 'Failed to save your message.' });
-    }
+        if (userMsgError) {
+          console.error('Failed to save user message, proceeding without persistence:', userMsgError);
+        }
+      }
 
-    // 3. Load Conversation History
-    const { data: history, error: historyError } = await userSupabase
-      .from('ai_messages')
-      .select('role, content')
-      .eq('conversation_id', currentConvId)
-      .order('created_at', { ascending: true });
+      // 3. Load Conversation History
+      if (currentConvId) {
+        const { data: dbHistory, error: historyError } = await userSupabase
+          .from('ai_messages')
+          .select('role, content')
+          .eq('conversation_id', currentConvId)
+          .order('created_at', { ascending: true });
 
-    if (historyError) {
-      console.error('Failed to load history:', historyError);
-      return res.status(500).json({ error: 'Failed to load conversation history.' });
+        if (historyError) {
+          console.error('Failed to load history, proceeding without context:', historyError);
+        } else if (dbHistory) {
+          history = dbHistory;
+        }
+      }
+    } catch (dbError) {
+      console.warn('Database error occurred during chat initialization. Proceeding without persistence.', dbError);
     }
 
     // 4. Build System Prompt & Messages for Groq

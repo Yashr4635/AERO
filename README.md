@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🚑 LIFELANE
+# 🚑 AERO
 ### Clear the Way. Save Critical Time.
 
 Real-time emergency coordination between ambulances and traffic-response personnel.
@@ -19,15 +19,15 @@ Real-time emergency coordination between ambulances and traffic-response personn
 
 <br>
 
-> **LIFELANE helps traffic-response personnel see an ambulance's live location, destination, route, ETA and emergency state through a shared real-time operational interface.**
+> **AERO helps traffic-response personnel see an ambulance's live location, destination, route, ETA and emergency state through a shared real-time operational interface.**
 
 <br>
 
 ---
 
-## 💡 What is LIFELANE?
+## 💡 What is AERO?
 
-LIFELANE connects an ambulance and traffic-response personnel through a shared real-time emergency view.
+AERO connects an ambulance and traffic-response personnel through a shared real-time emergency view.
 
 **The ambulance shares:**
 - Precise GPS location
@@ -61,7 +61,7 @@ Communication Fragmentation
 ```
 Information is fragmented. The ambulance knows where it's going, but the police handling the intersections often do not have immediate visibility. 
 
-### LIFELANE
+### AERO
 ```text
 🚑 Ambulance
     ↓
@@ -79,7 +79,7 @@ Creates a unified, instantaneous digital corridor.
 
 ## 🔑 The Solution
 
-LIFELANE solves coordination delays through 7 key features:
+AERO solves coordination delays through 7 key features:
 - Live Browser Geolocation tracking
 - Hospital destination selection via Google Places API
 - Road route calculation using OSRM
@@ -92,7 +92,7 @@ LIFELANE solves coordination delays through 7 key features:
 
 ## 🚨 Current MVP (Two-Device Concept)
 
-**LIFELANE is a production-oriented emergency-response coordination prototype, with a working real-time ambulance-to-police MVP and a roadmap toward production deployment.**
+**AERO is a production-oriented emergency-response coordination prototype, with a working real-time ambulance-to-police MVP and a roadmap toward production deployment.**
 
 The core working concept is a two-role emergency coordination flow across two devices:
 
@@ -304,7 +304,7 @@ flowchart TB
 ## 📡 Detailed Technical Working
 
 ### Realtime Architecture
-LIFELANE currently uses **Supabase Realtime** rather than maintaining a custom WebSocket + Redis infrastructure.
+AERO currently uses **Supabase Realtime** rather than maintaining a custom WebSocket + Redis infrastructure.
 ```text
 🚑 Ambulance
      ↓
@@ -389,7 +389,7 @@ stateDiagram-v2
 
 ## 🤖 AERO AI
 
-AERO is the intelligent conversational assistant within LIFELANE.
+AERO is the intelligent conversational assistant within AERO.
 
 **Current implementation:**
 ```text
@@ -561,7 +561,7 @@ flowchart LR
 
 ## 🔮 Future AI / ML
 
-Future possibilities for LIFELANE data utilization:
+Future possibilities for AERO data utilization:
 * Predictive ETA adjustment based on real-time congestion
 * Route optimization and alternate pathing
 * Emergency demand prediction
@@ -614,14 +614,14 @@ Future possibilities for LIFELANE data utilization:
 
 ## 🌍 Why This Project Matters
 
-LIFELANE attacks the communication fragmentation inherent in modern emergency transit. By creating shared location visibility and route transparency, responders gain critical situational awareness. Faster communication and scalable digital coordination mean earlier intersection clearance, fewer traffic delays, and ultimately, saved lives.
+AERO attacks the communication fragmentation inherent in modern emergency transit. By creating shared location visibility and route transparency, responders gain critical situational awareness. Faster communication and scalable digital coordination mean earlier intersection clearance, fewer traffic delays, and ultimately, saved lives.
 
 ---
 
 ## 🎓 Viva Section
 
-### Explain LIFELANE in 30 Seconds
-"LIFELANE is a real-time emergency coordination platform. It allows an ambulance to select a destination hospital and instantly broadcast its live GPS route to a centralized traffic-police dashboard via Supabase WebSockets. This gives traffic responders the advance visibility they need to clear congestion before the ambulance arrives."
+### Explain AERO in 30 Seconds
+"AERO is a real-time emergency coordination platform. It allows an ambulance to select a destination hospital and instantly broadcast its live GPS route to a centralized traffic-police dashboard via Supabase WebSockets. This gives traffic responders the advance visibility they need to clear congestion before the ambulance arrives."
 
 **Explain the architecture in 30 seconds**
 "It's a React/Vite frontend using Leaflet for maps and OSRM for routing, backed by a Node/Express API proxy for external services. Data is persisted in PostgreSQL and synchronized in real-time across devices using Supabase Realtime WebSockets."
@@ -651,7 +651,7 @@ LIFELANE attacks the communication fragmentation inherent in modern emergency tr
 
 ## ❓ FAQ
 
-**What is LIFELANE?**
+**What is AERO?**
 An emergency coordination platform linking ambulances with traffic response units.
 
 **Who uses it?**
@@ -669,7 +669,7 @@ Coordinate pairs are sent to OSRM, which returns a GeoJSON polyline and distance
 **Does OSRM provide live traffic?**
 No, currently it provides base road-network ETAs.
 
-**Does LIFELANE control traffic signals?**
+**Does AERO control traffic signals?**
 No, it provides situational awareness to human officers who can manage intersections.
 
 **Why Node/Express?**
@@ -686,7 +686,7 @@ Migrating the backend logic to a dedicated Python/FastAPI service and implementi
 
 ---
 
-> **DISCLAIMER:** LIFELANE is currently a prototype/development project designed to demonstrate emergency-response coordination concepts. It is not a replacement for official emergency services, dispatch systems, medical services, or government traffic-control infrastructure.
+> **DISCLAIMER:** AERO is currently a prototype/development project designed to demonstrate emergency-response coordination concepts. It is not a replacement for official emergency services, dispatch systems, medical services, or government traffic-control infrastructure.
 
 <div align="center">
   <p>License: Not yet specified.</p>

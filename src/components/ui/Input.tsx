@@ -39,13 +39,13 @@ export function Input({
           className={`
             w-full bg-navy-800 border rounded-[6px] px-3 py-2 text-sm text-navy-50
             placeholder:text-navy-500
-            transition-colors duration-150
-            focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-navy-900
+            transition-all duration-[120ms]
+            focus:outline-none
             disabled:opacity-50 disabled:cursor-not-allowed
             ${icon ? 'pl-10' : ''}
             ${error
-              ? 'border-emergency-500 focus:ring-emergency-500'
-              : 'border-navy-600 hover:border-navy-500 focus:ring-info-500 focus:border-info-500'
+              ? 'border-emergency-500 focus:border-emergency-500 focus:shadow-[0_0_0_3px_rgba(239,68,68,0.15)]'
+              : 'border-navy-600 hover:border-navy-500 focus:border-[#0EA5E9] focus:shadow-[0_0_0_3px_rgba(14,165,233,0.15)]'
             }
           `}
           aria-invalid={error ? 'true' : undefined}

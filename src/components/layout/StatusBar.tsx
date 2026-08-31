@@ -1,11 +1,10 @@
-import { useState } from 'react';
+
 import { useNavigate } from 'react-router-dom';
 import type { UserRole, ConnectionState, GPSState } from '../../types';
 import { ConnectionIndicator } from '../status/ConnectionIndicator';
 import { GPSIndicator } from '../status/GPSIndicator';
 import { Badge } from '../ui/Badge';
 import { AccountMenu } from './AccountMenu';
-import { audioAlert } from '../../utils/audioAlert';
 
 interface StatusBarProps {
   userRole?: UserRole;
@@ -37,17 +36,7 @@ export function StatusBar({
   gpsAccuracy,
 }: StatusBarProps) {
   const navigate = useNavigate();
-  const [isMuted, setIsMuted] = useState(audioAlert.getIsMuted());
   // const [showRoleSwitcher, setShowRoleSwitcher] = useState(false);
-
-  const toggleAudio = () => {
-    const nextMuted = !isMuted;
-    setIsMuted(nextMuted);
-    audioAlert.setMuted(nextMuted);
-    if (!nextMuted) {
-      audioAlert.playSuccessChime();
-    }
-  };
 
   return (
     <header className="h-12 bg-navy-900 border-b border-navy-700/80 flex items-center justify-between px-3 sm:px-4 shrink-0 z-50">
@@ -79,19 +68,6 @@ export function StatusBar({
 
       {/* Right: Indicators & Controls */}
       <div className="flex items-center gap-2 sm:gap-3">
-        {/* Audio Siren Alert Toggle */}
-        <button
-          onClick={toggleAudio}
-          className={`px-2 py-1 rounded-md text-xs font-mono flex items-center gap-1.5 border transition-colors ${
-            isMuted
-              ? 'bg-navy-800 text-navy-400 border-navy-700 hover:text-navy-200'
-              : 'bg-emerald-950 text-emerald-300 border-emerald-700/60 shadow-sm'
-          }`}
-          title={isMuted ? 'Unmute Audio Siren Alerts' : 'Mute Audio Siren Alerts'}
-        >
-          <span>{isMuted ? '🔇 Muted' : '🔊 Siren ON'}</span>
-        </button>
-
         {gpsState && (
           <GPSIndicator state={gpsState} accuracy={gpsAccuracy} />
         )}
