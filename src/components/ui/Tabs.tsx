@@ -30,7 +30,7 @@ export function Tabs({ tabs, defaultTab, className = '', onChange }: TabsProps) 
       {/* Tab list */}
       <div
         role="tablist"
-        className="flex border-b border-navy-600/50 gap-1 overflow-x-auto"
+        className="flex border-b border-border-subtle gap-1 overflow-x-auto"
       >
         {tabs.map((tab) => (
           <button
@@ -55,14 +55,14 @@ export function Tabs({ tabs, defaultTab, className = '', onChange }: TabsProps) 
               border-b-2 -mb-px transition-colors duration-150
               disabled:opacity-40 disabled:cursor-not-allowed
               ${activeTab === tab.id
-                ? 'border-info-500 text-info-300'
-                : 'border-transparent text-navy-400 hover:text-navy-200 hover:border-navy-500'
+                ? 'border-[#35C7FF] text-[#35C7FF]'
+                : 'border-transparent text-text-secondary hover:text-text-primary hover:border-border-strong'
               }
             `}
           >
             {tab.label}
             {tab.badge !== undefined && (
-              <span className="ml-2 px-1.5 py-0.5 text-[11px] rounded-full bg-navy-700 text-navy-300">
+              <span className="ml-2 px-1.5 py-0.5 text-[11px] rounded-full bg-bg-surface text-text-secondary">
                 {tab.badge}
               </span>
             )}

@@ -72,18 +72,18 @@ export function AuthCallbackPage() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh flex flex-col items-center justify-center bg-navy-950 p-4">
-        <div className="w-16 h-16 rounded-full border-4 border-navy-800 border-t-cyan-500 animate-spin mb-4"></div>
+      <div className="min-h-dvh flex flex-col items-center justify-center bg-bg-main p-4">
+        <div className="w-16 h-16 rounded-full border-4 border-border-subtle border-t-[#35C7FF] animate-spin mb-4"></div>
         <h2 className="text-xl font-bold text-white">Verifying Authentication...</h2>
-        <p className="text-navy-400 mt-2">Please wait while we confirm your credentials.</p>
+        <p className="text-text-secondary mt-2">Please wait while we confirm your credentials.</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-dvh flex items-center justify-center bg-navy-950 p-4">
-        <div className="w-full max-w-md bg-navy-900 border border-red-500/30 rounded-2xl p-8 shadow-2xl text-center">
+      <div className="min-h-dvh flex items-center justify-center bg-bg-main p-4">
+        <div className="w-full max-w-md bg-bg-surface border border-[#FF3B30]/30 rounded-2xl p-8 shadow-2xl text-center">
           <div className="w-16 h-16 rounded-full bg-red-500/20 border border-red-500/30 mx-auto flex items-center justify-center mb-6">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5">
               <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" strokeLinejoin="round" />

@@ -11,17 +11,17 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    'bg-info-600 text-white hover:bg-info-700 active:bg-info-800 focus-visible:ring-info-500',
+    'enterprise-button-primary',
   emergency:
-    'bg-emergency-600 text-white hover:bg-emergency-700 active:bg-emergency-800 focus-visible:ring-emergency-500 shadow-emergency',
+    'bg-status-error text-white hover:bg-red-600 active:scale-95 shadow-[0_0_20px_rgba(229,57,53,0.4)]',
   success:
-    'bg-success-600 text-white hover:bg-success-700 active:bg-success-800 focus-visible:ring-success-500',
+    'bg-status-success text-[#0B0D10] font-bold hover:brightness-110 active:scale-95',
   danger:
-    'bg-emergency-600 text-white hover:bg-emergency-700 active:bg-emergency-800 focus-visible:ring-emergency-500',
+    'bg-status-error text-white hover:bg-red-600 active:scale-95',
   ghost:
-    'bg-transparent text-navy-200 hover:bg-navy-800 active:bg-navy-700 focus-visible:ring-navy-500',
+    'bg-transparent text-text-secondary hover:text-text-primary hover:bg-white/5 active:scale-95',
   outline:
-    'bg-transparent text-navy-200 border border-navy-600 hover:bg-navy-800 active:bg-navy-700 focus-visible:ring-navy-500',
+    'enterprise-button-secondary',
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -49,7 +49,7 @@ export function Button({
       className={`
         inline-flex items-center justify-center font-medium
         transition-colors duration-150 cursor-pointer
-        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-900
+        focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-bg-main
         disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none
         ${variantClasses[variant]}
         ${sizeClasses[size]}

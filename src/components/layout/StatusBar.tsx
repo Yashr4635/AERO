@@ -38,7 +38,6 @@ export function StatusBar({
 }: StatusBarProps) {
   const navigate = useNavigate();
   const [isMuted, setIsMuted] = useState(audioAlert.getIsMuted());
-  // const [showRoleSwitcher, setShowRoleSwitcher] = useState(false);
 
   const toggleAudio = () => {
     const nextMuted = !isMuted;
@@ -50,26 +49,27 @@ export function StatusBar({
   };
 
   return (
-    <header className="h-12 bg-navy-900 border-b border-navy-700/80 flex items-center justify-between px-3 sm:px-4 shrink-0 z-50">
+    <header className="h-14 bg-bg-surface border-b border-border-subtle flex items-center justify-between px-4 sm:px-6 shrink-0 z-50">
       {/* Left: Brand & Role */}
-      <div className="flex items-center gap-2 sm:gap-3">
-        <div 
-          onClick={() => navigate('/')} 
-          className="flex items-center gap-2 cursor-pointer hover:opacity-90 transition-opacity"
+      <div className="flex items-center gap-3 sm:gap-4">
+        <div
+          onClick={() => navigate('/')}
+          className="flex items-center gap-2.5 cursor-pointer hover:opacity-80 transition-opacity"
         >
-          <div className="w-7 h-7 rounded-lg bg-emergency-600/20 border border-emergency-500/30 flex items-center justify-center">
+          {/* AERO Logo Mark */}
+          <div className="w-8 h-8 rounded-lg bg-[#E53935] flex items-center justify-center shadow-[0_0_12px_rgba(229,57,53,0.4)]">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4z" fill="#ef4444" opacity="0.4" stroke="#ef4444" strokeWidth="2"/>
-              <path d="M9 12h6M12 9v6" stroke="white" strokeWidth="2.5" strokeLinecap="round"/>
+              <path d="M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4z" fill="white" opacity="0.95"/>
+              <path d="M9 12h6M12 9v6" stroke="#07090C" strokeWidth="2.5" strokeLinecap="round"/>
             </svg>
           </div>
-          <span className="text-sm sm:text-base font-bold tracking-wide text-navy-50 font-sans">
-            LIFE<span className="text-emergency-500">LANE</span>
+          <span className="text-lg font-black tracking-tight text-white font-sans">
+            AERO
           </span>
         </div>
 
         {userRole && (
-          <div className="flex items-center">
+          <div className="flex items-center ml-2 border-l border-border-subtle pl-4">
             <Badge variant={roleBadgeVariant[userRole]} size="sm">
               {roleLabels[userRole]}
             </Badge>
@@ -78,18 +78,24 @@ export function StatusBar({
       </div>
 
       {/* Right: Indicators & Controls */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-3 sm:gap-4">
         {/* Audio Siren Alert Toggle */}
         <button
           onClick={toggleAudio}
-          className={`px-2 py-1 rounded-md text-xs font-mono flex items-center gap-1.5 border transition-colors ${
+          className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 border transition-all ${
             isMuted
-              ? 'bg-navy-800 text-navy-400 border-navy-700 hover:text-navy-200'
-              : 'bg-emerald-950 text-emerald-300 border-emerald-700/60 shadow-sm'
+              ? 'bg-transparent text-text-secondary border-border-subtle hover:text-text-primary hover:border-border-strong'
+              : 'bg-[#E53935]/10 text-[#E53935] border-[#E53935]/20 hover:bg-[#E53935]/20'
           }`}
           title={isMuted ? 'Unmute Audio Siren Alerts' : 'Mute Audio Siren Alerts'}
         >
-          <span>{isMuted ? '🔇 Muted' : '🔊 Siren ON'}</span>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+            {isMuted
+              ? <><path d="M11 5L6 9H2v6h4l5 4V5z"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></>
+              : <><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></>
+            }
+          </svg>
+          <span>{isMuted ? 'Muted' : 'Siren ON'}</span>
         </button>
 
         {gpsState && (
@@ -98,7 +104,7 @@ export function StatusBar({
         <ConnectionIndicator state={connectionState} />
         {userName && userRole && (
           <>
-            <div className="w-px h-5 bg-navy-700 hidden sm:block mx-0.5" />
+            <div className="w-px h-6 bg-border-subtle hidden sm:block mx-1" />
             <AccountMenu userName={userName} userRole={userRole} />
           </>
         )}

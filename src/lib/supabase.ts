@@ -34,5 +34,13 @@ const createMockSupabase = () => {
 };
 
 export const supabase = isConfigured 
-  ? createClient(supabaseUrl, supabaseAnonKey) 
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        storage: window.sessionStorage,
+        storageKey: 'aero-session', // Isolated key for sessionStorage
+        autoRefreshToken: true,
+        persistSession: true,
+        detectSessionInUrl: true
+      }
+    }) 
   : createMockSupabase();

@@ -4,6 +4,7 @@
  * hospitals near a given GPS coordinate within a specified radius.
  * Falls back to OpenStreetMap Overpass if Google fails.
  */
+import { supabase } from '../lib/supabase';
 
 export interface LiveHospital {
   id: string;
@@ -52,7 +53,7 @@ export async function searchNearbyHospitals(
   try {
     console.log(`[AERO HOSPITAL] Querying Google Places API proxy for hospitals...`);
     // Need auth token for backend proxy
-    const session = JSON.parse(localStorage.getItem('sb-yozhchqmslptfysuoxbw-auth-token') || '{}');
+    const { data: { session } } = await supabase.auth.getSession();
     const token = session?.access_token || '';
 
     const res = await fetch('http://localhost:3001/api/places/hospitals', {

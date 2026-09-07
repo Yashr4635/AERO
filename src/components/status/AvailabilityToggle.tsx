@@ -22,7 +22,7 @@ export function AvailabilityToggle({
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <span className="text-[13px] font-medium text-navy-300">Status</span>
+      <span className="text-[13px] font-medium text-text-secondary">Status</span>
       <button
         role="switch"
         aria-checked={isAvailable}
@@ -31,9 +31,9 @@ export function AvailabilityToggle({
         disabled={disabled || status === 'BUSY'}
         className={`
           relative w-12 h-7 rounded-full transition-colors duration-200 cursor-pointer
-          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-info-500 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-900
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#35C7FF] focus-visible:ring-offset-2 focus-visible:ring-offset-bg-main
           disabled:opacity-50 disabled:cursor-not-allowed
-          ${isAvailable ? 'bg-success-600' : 'bg-navy-600'}
+          ${isAvailable ? 'bg-[#20D67A]' : 'bg-white/10'}
         `}
       >
         <span
@@ -47,7 +47,7 @@ export function AvailabilityToggle({
       </button>
       <span className={`text-[12px] font-semibold ${
         status === 'BUSY' ? 'text-warning-400' :
-        isAvailable ? 'text-success-400' : 'text-navy-400'
+        isAvailable ? 'text-[#20D67A]' : 'text-text-secondary'
       }`}>
         {status === 'BUSY' ? 'Busy' : isAvailable ? 'Available' : 'Unavailable'}
       </span>

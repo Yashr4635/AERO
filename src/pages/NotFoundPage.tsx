@@ -6,11 +6,11 @@ export function NotFoundPage() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-dvh bg-navy-950 flex flex-col items-center justify-center p-4">
-      <div className="w-full max-w-md bg-navy-900 border border-navy-700 rounded-xl p-8 shadow-card text-center">
+    <div className="min-h-dvh bg-bg-main flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-md bg-bg-surface border border-border-subtle rounded-xl p-8 shadow-2xl text-center">
         <EmptyState
           icon={
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-navy-500 mb-4">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-text-secondary mb-4">
               <circle cx="12" cy="12" r="10" />
               <line x1="12" y1="8" x2="12" y2="12" />
               <line x1="12" y1="16" x2="12.01" y2="16" />

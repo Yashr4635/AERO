@@ -2,6 +2,7 @@ import type { UserRole, ConnectionState, GPSState } from '../../types';
 import { StatusBar } from './StatusBar';
 import { BottomNav } from './BottomNav';
 import { GlobalEmergencyBanner } from '../common/GlobalEmergencyBanner';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -21,7 +22,7 @@ export function AppShell({
   gpsAccuracy,
 }: AppShellProps) {
   return (
-    <div className="flex flex-col h-dvh overflow-hidden bg-navy-950 font-sans">
+    <div className="flex flex-col h-dvh overflow-hidden bg-bg-main font-sans">
       <StatusBar
         userRole={userRole}
         userName={userName}
@@ -32,29 +33,48 @@ export function AppShell({
 
       <GlobalEmergencyBanner />
 
-      {/* Connection lost banner */}
-      {connectionState === 'disconnected' && (
-        <div className="bg-emergency-900/90 border-b border-emergency-700/80 px-4 py-1.5 flex items-center justify-between animate-fade-in shrink-0">
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emergency-400 animate-pulse" />
-            <span className="text-[12px] font-medium text-emergency-200" role="alert">
-              Network connection disconnected. Retrying real-time connection...
+      {/* Connection Banners */}
+      <AnimatePresence>
+        {connectionState === 'disconnected' && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-[#E53935]/10 border-b border-[#E53935]/20 px-4 py-1.5 flex items-center justify-between shrink-0 overflow-hidden"
+          >
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              <span className="text-[12px] font-medium text-[#E53935]" role="alert">
+                Network connection disconnected. Retrying real-time connection...
+              </span>
+            </div>
+          </motion.div>
+        )}
+        {connectionState === 'reconnecting' && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            className="bg-[#FFB020]/10 border-b border-[#FFB020]/20 px-4 py-1.5 flex items-center gap-2 shrink-0 overflow-hidden"
+          >
+            <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse-soft shrink-0" aria-hidden="true" />
+            <span className="text-[12px] text-[#FFB020] font-medium">
+              Reconnecting to AERO central network...
             </span>
-          </div>
-        </div>
-      )}
-      {connectionState === 'reconnecting' && (
-        <div className="bg-warning-900/80 border-b border-warning-700/60 px-4 py-1.5 flex items-center gap-2 animate-fade-in shrink-0">
-          <span className="w-2 h-2 rounded-full bg-warning-500 animate-pulse-soft shrink-0" aria-hidden="true" />
-          <span className="text-[12px] text-warning-200">
-            Reconnecting to AERO central network...
-          </span>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Main content */}
-      <main className="flex-1 overflow-hidden relative min-h-0">
-        {children}
+      <main className="flex-1 overflow-hidden relative min-h-0 bg-bg-main">
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="h-full w-full"
+        >
+          {children}
+        </motion.div>
       </main>
 
       <BottomNav role={userRole} />

@@ -148,7 +148,7 @@ export function BottomNav({ role }: BottomNavProps) {
 
   return (
     <nav
-      className="h-14 bg-navy-900 border-t border-navy-700/80 flex items-center justify-around px-2 shrink-0 z-50 sm:hidden"
+      className="h-14 bg-bg-surface border-t border-border-subtle flex items-center justify-around px-2 shrink-0 z-50 sm:hidden"
       aria-label="Main navigation"
     >
       {items.map((item) => (
@@ -159,8 +159,8 @@ export function BottomNav({ role }: BottomNavProps) {
             flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-[6px] min-w-[56px]
             transition-colors duration-150
             ${isActive
-              ? 'text-emergency-400 font-bold'
-              : 'text-navy-400 hover:text-navy-200'
+              ? 'text-white font-bold bg-bg-elevated'
+              : 'text-text-secondary hover:text-white hover:bg-bg-main'
             }
           `}
         >

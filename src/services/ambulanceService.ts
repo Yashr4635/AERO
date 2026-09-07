@@ -79,8 +79,13 @@ export const ambulanceService = {
     };
 
     // Supabase Persistence
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('User not authenticated');
+    let userId = 'demo-user-id';
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) userId = user.id;
+    } catch (err) {
+      console.warn("Supabase auth bypassed in ambulance service for Demo Mode.");
+    }
 
     const priorityMapping: Record<string, string> = {
       'CODE_RED': 'critical',
@@ -90,7 +95,7 @@ export const ambulanceService = {
     const pgPriority = priorityMapping[newEmergency.priority as string] || 'critical';
     
     const { data, error } = await supabase.from('emergency_incidents').insert({
-      user_id: user.id,
+      user_id: userId,
       incident_type: newEmergency.category,
       priority: pgPriority,
       status: 'active',

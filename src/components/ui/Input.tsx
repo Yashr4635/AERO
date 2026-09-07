@@ -23,29 +23,25 @@ export function Input({
       {label && (
         <label
           htmlFor={inputId}
-          className="text-[13px] font-medium text-navy-300"
+          className="text-xs font-bold uppercase tracking-wider text-text-secondary mb-1"
         >
           {label}
         </label>
       )}
       <div className="relative">
         {icon && (
-          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-navy-400" aria-hidden="true">
+          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary" aria-hidden="true">
             {icon}
           </span>
         )}
         <input
           id={inputId}
           className={`
-            w-full bg-navy-800 border rounded-[6px] px-3 py-2 text-sm text-navy-50
-            placeholder:text-navy-500
-            transition-colors duration-150
-            focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-navy-900
-            disabled:opacity-50 disabled:cursor-not-allowed
+            enterprise-input
             ${icon ? 'pl-10' : ''}
             ${error
-              ? 'border-emergency-500 focus:ring-emergency-500'
-              : 'border-navy-600 hover:border-navy-500 focus:ring-info-500 focus:border-info-500'
+              ? 'border-status-error focus:ring-status-error/50'
+              : ''
             }
           `}
           aria-invalid={error ? 'true' : undefined}
@@ -54,7 +50,7 @@ export function Input({
         />
       </div>
       {error && (
-        <p id={`${inputId}-error`} className="text-[12px] text-emergency-400 flex items-center gap-1" role="alert">
+        <p id={`${inputId}-error`} className="text-[12px] text-status-error font-medium flex items-center gap-1 mt-1" role="alert">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
             <circle cx="12" cy="12" r="10" />
             <line x1="12" y1="8" x2="12" y2="12" />
@@ -64,7 +60,7 @@ export function Input({
         </p>
       )}
       {hint && !error && (
-        <p id={`${inputId}-hint`} className="text-[12px] text-navy-400">
+        <p id={`${inputId}-hint`} className="text-[12px] text-text-secondary mt-1">
           {hint}
         </p>
       )}

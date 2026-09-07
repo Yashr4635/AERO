@@ -101,45 +101,45 @@ export function SOSController({
         cancelLabel={state === 'COUNTDOWN' ? 'CANCEL (Aborting)' : 'Cancel'}
       >
         <div className="space-y-4">
-          <p className="text-sm text-navy-200">
+          <p className="text-sm text-text-secondary">
             {state === 'COUNTDOWN'
               ? 'Computing live OSRM route & broadcasting green-wave to police…'
               : 'Please review the emergency details before raising the SOS.'}
           </p>
 
-          <div className="bg-navy-900 border border-navy-700 rounded-xl p-3 text-xs space-y-3">
+          <div className="bg-bg-main border border-border-subtle rounded-xl p-3 text-xs space-y-3">
             <div className="flex flex-col">
-              <span className="text-navy-400 uppercase tracking-widest text-[10px]">Emergency:</span>
+              <span className="telemetry-label">Emergency:</span>
               <span className="font-bold text-white text-sm">{patientData?.category || 'General'}</span>
             </div>
             
             <div className="flex flex-col">
-              <span className="text-navy-400 uppercase tracking-widest text-[10px]">Priority:</span>
-              <span className="font-bold text-red-400 text-sm">{patientData?.priority || 'Critical'}</span>
+              <span className="telemetry-label">Priority:</span>
+              <span className="font-bold text-[#FF3B30] text-sm">{patientData?.priority || 'Critical'}</span>
             </div>
 
             <div className="flex flex-col">
-              <span className="text-navy-400 uppercase tracking-widest text-[10px]">Current Location:</span>
-              <span className="font-bold text-cyan-300 font-mono text-xs">{currentPos ? `${currentPos[0].toFixed(5)}, ${currentPos[1].toFixed(5)}` : 'LIVE GPS'}</span>
+              <span className="telemetry-label">Current Location:</span>
+              <span className="font-bold text-[#35C7FF] font-mono text-xs">{currentPos ? `${currentPos[0].toFixed(5)}, ${currentPos[1].toFixed(5)}` : 'LIVE GPS'}</span>
             </div>
 
             <div className="flex flex-col">
-              <span className="text-navy-400 uppercase tracking-widest text-[10px]">Destination:</span>
-              <span className="font-bold text-emerald-400 text-sm">{hospital.name}</span>
+              <span className="telemetry-label">Destination:</span>
+              <span className="font-bold text-[#20D67A] text-sm">{hospital.name}</span>
             </div>
 
             <div className="flex flex-col">
-              <span className="text-navy-400 uppercase tracking-widest text-[10px]">Route:</span>
-              <span className="font-bold text-navy-100 text-xs">OSRM Computed Route</span>
+              <span className="telemetry-label">Route:</span>
+              <span className="font-bold text-white text-xs">OSRM Computed Route</span>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="flex flex-col">
-                <span className="text-navy-400 uppercase tracking-widest text-[10px]">Distance:</span>
+                <span className="telemetry-label">Distance:</span>
                 <span className="font-bold text-white text-sm">{distLabel}</span>
               </div>
               <div className="flex flex-col">
-                <span className="text-navy-400 uppercase tracking-widest text-[10px]">Estimated Travel Time:</span>
+                <span className="telemetry-label">Estimated Travel Time:</span>
                 <span className="font-bold text-white text-sm">{(hospital as any).drivingEtaSeconds ? Math.round((hospital as any).drivingEtaSeconds/60) : '--'} min</span>
               </div>
             </div>
@@ -147,13 +147,13 @@ export function SOSController({
 
           {state === 'COUNTDOWN' && (
             <div className="text-center py-4">
-              <span className="text-4xl font-bold text-emergency-500 tabular-nums animate-pulse">
+              <span className="text-4xl font-bold text-[#FF3B30] tabular-nums animate-pulse">
                 {countdown}
               </span>
-              <p className="text-xs text-navy-400 mt-2">Transmitting in {countdown}s…</p>
+              <p className="text-xs text-text-secondary mt-2">Transmitting in {countdown}s…</p>
               <button
                 onClick={handleCancel}
-                className="mt-4 px-4 py-2 bg-navy-800 hover:bg-navy-700 rounded-lg text-xs text-navy-200 font-medium transition-colors cursor-pointer border border-navy-700"
+                className="mt-4 px-4 py-2 bg-bg-elevated hover:bg-bg-main rounded-lg text-xs text-white font-medium transition-colors cursor-pointer border border-border-subtle"
               >
                 Abort SOS
               </button>

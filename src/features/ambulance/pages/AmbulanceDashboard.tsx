@@ -21,6 +21,7 @@ import type {
   Hospital,
 } from '../../../types';
 import { supabase } from '../../../lib/supabase';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const INITIAL_RADIUS_M = 15000;
 const MAX_RADIUS_M = 25000;
@@ -226,32 +227,36 @@ export function AmbulanceDashboard() {
       <div className="flex flex-col h-full overflow-hidden relative">
         
         {/* Float GPS Status */}
-        <div className="absolute bottom-6 left-4 z-[400] bg-navy-950/90 backdrop-blur-md border border-navy-800 rounded-lg p-3 shadow-lg pointer-events-auto flex items-center gap-3">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="absolute bottom-6 left-4 z-[400] bg-bg-surface backdrop-blur-md border border-border-subtle rounded-xl p-3 shadow-md pointer-events-auto flex items-center gap-3"
+        >
           <div className="relative flex items-center justify-center">
             {gpsEnabled ? (
               <>
-                <span className="absolute w-full h-full rounded-full bg-emerald-500/20 animate-ping"></span>
-                <div className="w-2.5 h-2.5 bg-emerald-500 rounded-full"></div>
+                <span className="absolute w-full h-full rounded-full bg-[#20D67A]/20 animate-ping"></span>
+                <div className="w-2.5 h-2.5 bg-[#20D67A] rounded-full"></div>
               </>
             ) : (
-              <div className="w-2.5 h-2.5 bg-amber-500 rounded-full"></div>
+              <div className="w-2.5 h-2.5 bg-[#FFB020] rounded-full"></div>
             )}
           </div>
           <div>
-            <div className="text-[10px] font-bold text-navy-400 uppercase tracking-widest">GPS Status</div>
-            <div className="text-sm font-medium text-white flex items-center gap-2">
+            <div className="telemetry-label">GPS Status</div>
+            <div className="text-sm font-bold text-white flex items-center gap-2">
               {gpsEnabled ? `Active (±${Math.round(currentAccuracy)}m)` : (gpsError ? 'Unavailable' : 'Searching...')}
             </div>
             {gpsEnabled && (
-              <div className="text-[10px] text-navy-300 font-mono mt-0.5">
+              <div className="text-[10px] text-text-secondary font-mono mt-0.5">
                 {currentPos[0].toFixed(5)}, {currentPos[1].toFixed(5)}
               </div>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* ── Map ── */}
-        <div className="flex-1 relative min-h-0 bg-gray-900">
+        <div className="flex-1 relative min-h-0 bg-bg-main">
           <MapView center={currentPos} zoom={15} showLiveLocation={true}>
             <HospitalSearchPanel
               userPos={gpsEnabled ? [currentPos[0], currentPos[1]] : null}
@@ -303,89 +308,114 @@ export function AmbulanceDashboard() {
         </div>
 
         {/* ── Control Panel ── */}
-        <div className="bg-navy-950 border-t border-navy-800 p-4 shrink-0 z-10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-          {!activeIncident ? (
-            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6">
-              
-              <div className="flex-1 bg-navy-900 border border-navy-800 rounded-xl p-5 shadow-inner">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="text-sm font-bold text-white tracking-wide">EMERGENCY PROFILE</h3>
+        <motion.div 
+          initial={{ y: 100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+          className="bg-bg-surface border-t border-border-subtle p-4 shrink-0 z-10 shadow-none"
+        >
+          <AnimatePresence mode="wait">
+            {!activeIncident ? (
+              <motion.div 
+                key="setup"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="max-w-7xl mx-auto flex flex-col lg:flex-row gap-6"
+              >
+                
+                <div className="flex-1 enterprise-card p-5 shadow-sm">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-sm font-bold text-white tracking-wide">EMERGENCY PROFILE</h3>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <Select
+                      label="Emergency Category"
+                      value={category}
+                      onChange={e => setCategory(e.target.value as EmergencyCategory)}
+                      options={[
+                        { value: 'CARDIAC', label: '🫀 Cardiac / STEMI' },
+                        { value: 'TRAUMA', label: '💥 Severe Trauma' },
+                        { value: 'STROKE', label: '🧠 Acute Stroke' },
+                        { value: 'RESPIRATORY', label: '🫁 Respiratory Failure' },
+                        { value: 'OBSTETRIC', label: '👶 Obstetric Emergency' },
+                        { value: 'GENERAL', label: '🚨 General Critical' },
+                      ]}
+                      className="enterprise-input"
+                    />
+                    <Select
+                      label="Triage Priority"
+                      value={priority}
+                      onChange={e => setPriority(e.target.value as EmergencyPriority)}
+                      options={[
+                        { value: 'CODE_RED', label: '🔴 Code Red — Immediate' },
+                        { value: 'CODE_AMBER', label: '🟠 Code Amber — Urgent' },
+                        { value: 'CODE_YELLOW', label: '🟡 Code Yellow — Moderate' },
+                      ]}
+                      className="enterprise-input"
+                    />
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <Select
-                    label="Emergency Category"
-                    value={category}
-                    onChange={e => setCategory(e.target.value as EmergencyCategory)}
-                    options={[
-                      { value: 'CARDIAC', label: '🫀 Cardiac / STEMI' },
-                      { value: 'TRAUMA', label: '💥 Severe Trauma' },
-                      { value: 'STROKE', label: '🧠 Acute Stroke' },
-                      { value: 'RESPIRATORY', label: '🫁 Respiratory Failure' },
-                      { value: 'OBSTETRIC', label: '👶 Obstetric Emergency' },
-                      { value: 'GENERAL', label: '🚨 General Critical' },
-                    ]}
-                  />
-                  <Select
-                    label="Triage Priority"
-                    value={priority}
-                    onChange={e => setPriority(e.target.value as EmergencyPriority)}
-                    options={[
-                      { value: 'CODE_RED', label: '🔴 Code Red — Immediate' },
-                      { value: 'CODE_AMBER', label: '🟠 Code Amber — Urgent' },
-                      { value: 'CODE_YELLOW', label: '🟡 Code Yellow — Moderate' },
-                    ]}
-                  />
-                </div>
-              </div>
 
-              <div className="w-full lg:w-[400px] flex flex-col justify-end">
-                {selectedHospital ? (
-                  <div className="w-full rounded-xl bg-navy-900 border border-emerald-500/30 overflow-hidden shadow-lg flex flex-col">
-                    <div className="p-4 flex flex-col gap-3">
-                      <div>
-                        <h4 className="text-lg font-black text-white">{selectedHospital.name}</h4>
-                        <p className="text-xs text-navy-300 mt-0.5 line-clamp-1">{selectedHospital.address}</p>
+                <div className="w-full lg:w-[400px] flex flex-col justify-end">
+                  {selectedHospital ? (
+                    <motion.div 
+                      initial={{ scale: 0.95, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="w-full rounded-xl bg-bg-main border border-border-subtle overflow-hidden shadow-md flex flex-col"
+                    >
+                      <div className="p-4 flex flex-col gap-3">
+                        <div>
+                          <h4 className="text-lg font-bold text-white">{selectedHospital.name}</h4>
+                          <p className="text-xs text-text-secondary mt-0.5 line-clamp-1">{selectedHospital.address}</p>
+                        </div>
+                        
+                        <div className="pt-2">
+                          <SOSController
+                            hospital={selectedHospital}
+                            ambulanceId={ambulance.id}
+                            currentPos={currentPos}
+                            patientData={{ category, priority, chiefComplaint: `${category} — ${priority}` }}
+                            onEmergencyActive={() => {}} // Supabase handles state update naturally
+                          />
+                        </div>
                       </div>
-                      
-                      <div className="pt-2">
-                        <SOSController
-                          hospital={selectedHospital}
-                          ambulanceId={ambulance.id}
-                          currentPos={currentPos}
-                          patientData={{ category, priority, chiefComplaint: `${category} — ${priority}` }}
-                          onEmergencyActive={() => {}} // Supabase handles state update naturally
-                        />
-                      </div>
+                    </motion.div>
+                  ) : (
+                    <div className="w-full py-8 rounded-xl bg-bg-main border border-border-subtle border-dashed text-center flex flex-col items-center justify-center gap-3 h-full min-h-[160px]">
+                      {loadingHospitals ? (
+                        <>
+                          <div className="w-6 h-6 border-2 border-[#35C7FF] border-t-transparent rounded-full animate-spin"></div>
+                          <span className="text-[#35C7FF] text-xs font-bold uppercase tracking-widest">Finding nearby hospitals...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span className="text-text-secondary text-xs font-bold uppercase tracking-widest">No Reachable Hospitals</span>
+                        </>
+                      )}
                     </div>
-                  </div>
-                ) : (
-                  <div className="w-full py-8 rounded-xl bg-navy-900/50 border border-navy-800 border-dashed text-center flex flex-col items-center justify-center gap-3 h-full min-h-[160px]">
-                    {loadingHospitals ? (
-                      <>
-                        <div className="w-6 h-6 border-2 border-cyan-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span className="text-cyan-400 text-xs font-bold uppercase tracking-widest">Finding nearby hospitals...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-navy-500 text-xs font-bold uppercase tracking-widest">No Reachable Hospitals</span>
-                      </>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="max-w-7xl mx-auto h-full">
-              <ActiveEmergencyView
-                emergency={activeIncident}
-                hospitalName={activeIncident.destination_hospital}
-                currentSpeedKmH={gpsLocation?.speed ? gpsLocation.speed * 3.6 : 0}
-                onCancel={() => setActiveIncident(null)}
-                onComplete={() => setActiveIncident(null)}
-              />
-            </div>
-          )}
-        </div>
+                  )}
+                </div>
+              </motion.div>
+            ) : (
+              <motion.div 
+                key="active"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                className="max-w-7xl mx-auto h-full"
+              >
+                <ActiveEmergencyView
+                  emergency={activeIncident}
+                  hospitalName={activeIncident.destination_hospital}
+                  currentSpeedKmH={gpsLocation?.speed ? gpsLocation.speed * 3.6 : 0}
+                  onCancel={() => setActiveIncident(null)}
+                  onComplete={() => setActiveIncident(null)}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
       </div>
     </AppShell>
   );

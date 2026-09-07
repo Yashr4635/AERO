@@ -1,4 +1,5 @@
 import type { BadgeVariant, EmergencyStatus } from '../../types';
+import { motion } from 'framer-motion';
 
 /* ── Badge ── */
 interface BadgeProps {
@@ -10,21 +11,21 @@ interface BadgeProps {
 }
 
 const badgeVariantClasses: Record<BadgeVariant, string> = {
-  info: 'bg-info-900/60 text-info-300 border-info-700/50',
-  success: 'bg-success-900/60 text-success-300 border-success-700/50',
-  warning: 'bg-warning-900/60 text-warning-300 border-warning-700/50',
-  danger: 'bg-emergency-900/60 text-emergency-300 border-emergency-700/50',
-  neutral: 'bg-navy-700/60 text-navy-300 border-navy-600/50',
-  emergency: 'bg-emergency-600 text-white border-emergency-500',
+  info: 'bg-[#35C7FF]/10 text-[#35C7FF] border-[#35C7FF]/20',
+  success: 'bg-[#20D67A]/10 text-[#20D67A] border-[#20D67A]/20',
+  warning: 'bg-[#FFB020]/10 text-[#FFB020] border-[#FFB020]/20',
+  danger: 'bg-[#FF3B30]/10 text-[#FF3B30] border-[#FF3B30]/20',
+  neutral: 'bg-bg-elevated text-text-secondary border-border-subtle',
+  emergency: 'bg-[#FF3B30] text-white border-[#FF3B30]/50 shadow-[0_0_15px_rgba(255,59,48,0.3)]',
 };
 
 const dotColorClasses: Record<BadgeVariant, string> = {
-  info: 'bg-info-400',
-  success: 'bg-success-400',
-  warning: 'bg-warning-400',
-  danger: 'bg-emergency-400',
-  neutral: 'bg-navy-400',
-  emergency: 'bg-white',
+  info: 'bg-[#35C7FF]',
+  success: 'bg-[#20D67A]',
+  warning: 'bg-[#FFB020]',
+  danger: 'bg-[#FF3B30]',
+  neutral: 'bg-text-secondary',
+  emergency: 'bg-white animate-pulse',
 };
 
 export function Badge({
@@ -35,7 +36,9 @@ export function Badge({
   dot = false,
 }: BadgeProps) {
   return (
-    <span
+    <motion.span
+      initial={{ scale: 0.9, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
       className={`
         inline-flex items-center gap-1.5 font-medium border rounded-full whitespace-nowrap
         ${size === 'sm' ? 'px-2 py-0.5 text-[11px]' : 'px-2.5 py-1 text-[12px]'}
@@ -47,7 +50,7 @@ export function Badge({
         <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${dotColorClasses[variant]}`} aria-hidden="true" />
       )}
       {children}
-    </span>
+    </motion.span>
   );
 }
 
@@ -66,7 +69,7 @@ const statusConfig: Record<EmergencyStatus, { variant: BadgeVariant; label: stri
 };
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {
-  const config = statusConfig[status];
+  const config = statusConfig[status] || { variant: 'neutral', label: status };
   return (
     <Badge variant={config.variant} size="md" dot className={className}>
       {config.label}

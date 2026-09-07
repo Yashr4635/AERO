@@ -8,13 +8,14 @@ import {
   RoutePolyline,
 } from '../../../components/map';
 import { Card } from '../../../components/ui/Card';
-import { Button } from '../../../components/ui/Button';
+
 import { useToast } from '../../../components/ui/Toast';
 import { IncomingEmergencyAlert } from '../components/IncomingEmergencyAlert';
 import { realtimeService } from '../../../services/realtimeService';
 import type { EmergencyIncident } from '../../../types';
 import { useLocation } from '../../../hooks/useLocation';
 import { supabase } from '../../../lib/supabase';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export function PoliceDashboard() {
   const { addToast } = useToast();
@@ -26,18 +27,23 @@ export function PoliceDashboard() {
   useEffect(() => {
     // Fetch officer profile
     const fetchProfile = async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single();
-        if (error || !data) {
-          console.error("Error fetching police profile:", error);
-          setPoliceProfile({ id: user.id, full_name: user.email?.split('@')[0] || 'Officer' });
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data, error } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+          if (error || !data) {
+            console.error("Error fetching police profile:", error);
+            setPoliceProfile({ id: user.id, full_name: user.email?.split('@')[0] || 'Officer' });
+          } else {
+            setPoliceProfile(data);
+          }
         } else {
-          setPoliceProfile(data);
+          // DEMO MODE: Provide a mock profile instead of kicking the user out
+          setPoliceProfile({ id: 'demo-police-id', full_name: 'Traffic Control (Demo)' });
         }
-      } else {
-        // If no user, redirect to login or show error
-        window.location.href = '/';
+      } catch (err) {
+        console.warn("Supabase auth bypassed for Demo Mode.");
+        setPoliceProfile({ id: 'demo-police-id', full_name: 'Traffic Control (Demo)' });
       }
     };
     fetchProfile();
@@ -94,7 +100,7 @@ export function PoliceDashboard() {
     : officerPos;
 
   if (!policeProfile) {
-    return <div className="min-h-dvh bg-navy-950 flex items-center justify-center text-navy-400">Loading Police Terminal...</div>;
+    return <div className="min-h-dvh bg-bg-main flex items-center justify-center text-text-secondary">Loading Police Terminal...</div>;
   }
 
   return (
@@ -108,26 +114,33 @@ export function PoliceDashboard() {
       <div className="flex flex-col lg:flex-row h-full overflow-hidden">
         
         {/* Left Side: Live Traffic Coordination Map & Incoming Alerts */}
-        <div className="flex-1 flex flex-col min-h-0 border-r border-navy-800">
+        <div className="flex-1 flex flex-col min-h-0 border-r border-border-subtle">
           
           {/* Incoming Emergency Alerts Bar */}
-          {incoming.length > 0 && (
-            <div className="shrink-0 p-3 bg-navy-950 border-b border-navy-800 z-[10] space-y-2">
-              {incoming.map(incident => (
-                <IncomingEmergencyAlert
-                  key={incident.id}
-                  emergency={incident}
-                  hospitalName={incident.destination_hospital}
-                  ambulanceName={incident.ambulance_id || 'Ambulance'}
-                  onAccept={handleAccept}
-                  onViewDetails={() => {}}
-                />
-              ))}
-            </div>
-          )}
+          <AnimatePresence>
+            {incoming.length > 0 && (
+              <motion.div 
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="shrink-0 p-3 bg-bg-surface border-b border-border-subtle z-[10] space-y-2 shadow-sm"
+              >
+                {incoming.map(incident => (
+                  <IncomingEmergencyAlert
+                    key={incident.id}
+                    emergency={incident}
+                    hospitalName={incident.destination_hospital}
+                    ambulanceName={incident.ambulance_id || 'Ambulance'}
+                    onAccept={handleAccept}
+                    onViewDetails={() => {}}
+                  />
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Live Police Map Area */}
-          <div className="flex-1 relative min-h-[300px] bg-gray-100">
+          <div className="flex-1 relative min-h-[300px] bg-bg-main">
             <MapView center={mapCenter} zoom={14} showLiveLocation={true}>
               {/* Police Officer Post */}
               <PoliceMarker
@@ -167,67 +180,106 @@ export function PoliceDashboard() {
         </div>
 
         {/* Right Side: Operations Panel */}
-        <div className="w-full lg:w-[450px] shrink-0 bg-navy-950 flex flex-col h-full overflow-y-auto">
-          <div className="p-4 border-b border-navy-800 flex justify-between items-center bg-navy-900/50">
-            <h2 className="text-sm font-semibold tracking-wider text-navy-300">ACTIVE CORRIDORS</h2>
-            <div className="px-2 py-0.5 rounded text-xs font-medium bg-blue-500/10 text-blue-400">
+        <div className="w-full lg:w-[450px] shrink-0 bg-bg-main flex flex-col h-full overflow-y-auto">
+          <div className="p-4 border-b border-border-subtle flex justify-between items-center bg-bg-surface shadow-sm z-10">
+            <h2 className="text-sm font-bold tracking-wider text-white">ACTIVE CORRIDORS</h2>
+            <div className="px-2 py-0.5 rounded-full text-xs font-bold bg-[#35C7FF]/10 text-[#35C7FF]">
               {active.length} ACTIVE
             </div>
           </div>
 
           <div className="p-4 space-y-4 flex-1">
-            {active.length === 0 ? (
-              <div className="text-center text-navy-400 py-12">
-                <div className="w-12 h-12 rounded-full bg-navy-900 flex items-center justify-center mx-auto mb-3">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
-                </div>
-                <p>No active emergencies.</p>
-                <p className="text-sm">Standby for incoming requests.</p>
-              </div>
-            ) : (
-              active.map(incident => (
-                <Card key={incident.id} className="p-4 bg-navy-900/50 border-blue-500/30 ring-1 ring-blue-500/20">
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h3 className="font-bold text-white text-lg">{incident.ambulance_id || 'Ambulance'}</h3>
-                      <p className="text-sm text-red-400 font-medium">Priority: {incident.priority.toUpperCase()}</p>
-                    </div>
-                    <div className="text-right">
-                      <div className="text-2xl font-bold text-blue-400 font-mono">
-                        {Math.round((incident.route_duration_seconds || 0) / 60)}<span className="text-sm text-blue-500 ml-1">min</span>
+            <AnimatePresence mode="wait">
+              {active.length === 0 ? (
+                <motion.div 
+                  key="empty"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="text-center text-text-secondary py-12"
+                >
+                  <div className="w-12 h-12 rounded-full bg-bg-elevated flex items-center justify-center mx-auto mb-3 border border-border-subtle shadow-inner">
+                    <svg className="w-6 h-6 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7"/></svg>
+                  </div>
+                  <p className="font-medium text-white">No active emergencies.</p>
+                  <p className="text-sm">Standby for incoming requests.</p>
+                </motion.div>
+              ) : (
+                active.map((incident, index) => (
+                  <motion.div
+                    key={incident.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                  >
+                    <Card className="enterprise-card border-[#35C7FF]/30">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h3 className="font-bold text-white text-lg">{incident.ambulance_id || 'Ambulance'}</h3>
+                          <p className="text-xs text-[#FF3B30] font-bold bg-[#FF3B30]/10 inline-block px-2 py-0.5 rounded-full mt-1 border border-[#FF3B30]/20">
+                            {incident.priority.toUpperCase()}
+                          </p>
+                        </div>
+                        <div className="text-right">
+                          <div className="text-2xl font-bold text-[#35C7FF] font-mono">
+                            {Math.round((incident.route_duration_seconds || 0) / 60)}<span className="text-sm text-[#35C7FF]/70 ml-1">min</span>
+                          </div>
+                          <p className="telemetry-label mt-0.5">ETA</p>
+                        </div>
                       </div>
-                      <p className="text-xs text-navy-300">ETA</p>
-                    </div>
-                  </div>
 
-                  <div className="space-y-2 mb-4 text-sm bg-navy-950 rounded-lg p-3 border border-navy-800">
-                    <div className="flex justify-between">
-                      <span className="text-navy-400">Destination:</span>
-                      <span className="text-white font-medium">{incident.destination_hospital}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-navy-400">Distance:</span>
-                      <span className="text-white font-medium">{((incident.route_distance_meters || 0) / 1000).toFixed(1)} km</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-navy-400">Speed:</span>
-                      <span className="text-white font-medium">{Math.round(incident.current_speed || 0)} km/h</span>
-                    </div>
-                  </div>
+                      <div className="space-y-2 mb-4 text-sm bg-bg-main rounded-lg p-3 border border-border-subtle">
+                        <div className="flex justify-between items-center">
+                          <span className="telemetry-label">Destination</span>
+                          <span className="text-white font-medium">{incident.destination_hospital}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="telemetry-label">Distance</span>
+                          <span className="text-[#20D67A] font-mono font-medium">{((incident.route_distance_meters || 0) / 1000).toFixed(1)} km</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="telemetry-label">Speed</span>
+                          <span className="text-[#35C7FF] font-mono font-medium">{Math.round(incident.current_speed || 0)} km/h</span>
+                        </div>
+                      </div>
 
-                  <div className="space-y-2">
-                    <p className="text-xs text-navy-400 uppercase tracking-wider mb-2">Corridor Actions</p>
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button variant="success" size="sm" onClick={() => handleStatusChange(incident.id, 'CLEAR')}>CLEAR</Button>
-                      <Button variant="emergency" size="sm" onClick={() => handleStatusChange(incident.id, 'CLEARING')}>CLEARING</Button>
-                      <Button variant="primary" size="sm" onClick={() => handleStatusChange(incident.id, 'CAUTION')}>CAUTION</Button>
-                      <Button variant="danger" size="sm" onClick={() => handleStatusChange(incident.id, 'BLOCKED')}>BLOCKED</Button>
-                    </div>
-                    <p className="text-xs text-center text-navy-300 mt-2">Current Status: <strong>{incident.corridor_status}</strong></p>
-                  </div>
-                </Card>
-              ))
-            )}
+                      <div className="space-y-3">
+                        <p className="telemetry-label">Corridor Actions</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          <button 
+                            className="bg-[#20D67A]/10 hover:bg-[#20D67A]/20 text-[#20D67A] border border-[#20D67A]/30 font-bold py-2 rounded-lg text-xs transition-colors"
+                            onClick={() => handleStatusChange(incident.id, 'CLEAR')}
+                          >
+                            CLEAR
+                          </button>
+                          <button 
+                            className="bg-[#35C7FF]/10 hover:bg-[#35C7FF]/20 text-[#35C7FF] border border-[#35C7FF]/30 font-bold py-2 rounded-lg text-xs transition-colors"
+                            onClick={() => handleStatusChange(incident.id, 'CLEARING')}
+                          >
+                            CLEARING
+                          </button>
+                          <button 
+                            className="bg-[#FFB020]/10 hover:bg-[#FFB020]/20 text-[#FFB020] border border-[#FFB020]/30 font-bold py-2 rounded-lg text-xs transition-colors"
+                            onClick={() => handleStatusChange(incident.id, 'CAUTION')}
+                          >
+                            CAUTION
+                          </button>
+                          <button 
+                            className="bg-[#FF3B30]/10 hover:bg-[#FF3B30]/20 text-[#FF3B30] border border-[#FF3B30]/30 font-bold py-2 rounded-lg text-xs transition-colors"
+                            onClick={() => handleStatusChange(incident.id, 'BLOCKED')}
+                          >
+                            BLOCKED
+                          </button>
+                        </div>
+                        <p className="text-[11px] text-center text-text-secondary mt-2">
+                          Current Status: <strong className="text-white">{incident.corridor_status}</strong>
+                        </p>
+                      </div>
+                    </Card>
+                  </motion.div>
+                ))
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>

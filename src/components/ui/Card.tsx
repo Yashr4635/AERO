@@ -9,11 +9,11 @@ interface CardProps {
 }
 
 export function Card({ children, variant = 'default', className = '', onClick }: CardProps) {
-  const base = 'bg-navy-800 border border-navy-600/50 rounded-[8px] shadow-card';
+  const base = 'enterprise-card';
   const variants = {
-    default: 'p-5',
-    interactive: 'p-5 cursor-pointer hover:bg-navy-700/80 hover:border-navy-500/50 transition-colors duration-150',
-    compact: 'p-3',
+    default: 'p-6',
+    interactive: 'p-6 cursor-pointer hover:border-brand-primary/50',
+    compact: 'p-4',
   };
 
   const Tag = onClick ? 'button' : 'div';
@@ -44,8 +44,8 @@ export function CardHeader({
   return (
     <div className={`flex items-start justify-between gap-4 mb-4 ${className}`}>
       <div>
-        <h3 className="text-base font-semibold text-navy-50">{title}</h3>
-        {subtitle && <p className="text-[13px] text-navy-400 mt-0.5">{subtitle}</p>}
+        <h3 className="text-base font-bold text-white tracking-tight">{title}</h3>
+        {subtitle && <p className="text-[13px] text-text-secondary mt-1">{subtitle}</p>}
       </div>
       {action && <div className="shrink-0">{action}</div>}
     </div>

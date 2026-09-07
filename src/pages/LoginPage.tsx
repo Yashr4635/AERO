@@ -30,7 +30,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
   };
 
   return (
-    <div className="min-h-dvh bg-navy-950 flex items-center justify-center p-4">
+    <div className="min-h-dvh bg-bg-main flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         {/* Brand */}
         <div className="text-center mb-8">
@@ -39,22 +39,22 @@ export function LoginPage({ onLogin }: LoginPageProps) {
               <path d="M12 2L4 6v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V6l-8-4z" fill="#06b6d4" opacity="0.2" stroke="#06b6d4" strokeWidth="1.5"/>
               <path d="M9 12h6M12 9v6" stroke="white" strokeWidth="2" strokeLinecap="round"/>
             </svg>
-            <h1 className="text-2xl font-bold tracking-wide text-navy-50">
-              LIFE<span className="text-info-400">LANE</span>
+            <h1 className="text-2xl font-bold tracking-wide text-text-primary">
+              LIFE<span className="text-[#35C7FF]">LANE</span>
             </h1>
           </div>
-          <p className="text-sm text-navy-400">
+          <p className="text-sm text-text-secondary">
             Emergency Ambulance Traffic Clearance System
           </p>
         </div>
 
         {/* Login form */}
-        <form onSubmit={handleSubmit} className="bg-navy-800 border border-navy-600/50 rounded-[12px] p-6 shadow-card space-y-4">
-          <h2 className="text-base font-semibold text-navy-100 mb-1">Sign In</h2>
-          <p className="text-[13px] text-navy-400 mb-4">Access your emergency response dashboard.</p>
+        <form onSubmit={handleSubmit} className="bg-bg-surface border border-border-subtle rounded-[12px] p-6 shadow-2xl space-y-4">
+          <h2 className="text-base font-semibold text-text-primary mb-1">Sign In</h2>
+          <p className="text-[13px] text-text-secondary mb-4">Access your emergency response dashboard.</p>
 
           {error && (
-            <div className="bg-emergency-900/40 border border-emergency-700/50 rounded-[6px] px-3 py-2 text-[13px] text-emergency-300" role="alert">
+            <div className="bg-[#FF3B30]/10 border border-[#FF3B30]/30 rounded-[6px] px-3 py-2 text-[13px] text-[#FF3B30]" role="alert">
               {error}
             </div>
           )}
@@ -103,7 +103,7 @@ export function LoginPage({ onLogin }: LoginPageProps) {
           </Button>
         </form>
 
-        <p className="text-center text-[11px] text-navy-500 mt-6">
+        <p className="text-center text-[11px] text-text-secondary/50 mt-6">
           AERO v1.0 — Emergency Response System
         </p>
       </div>

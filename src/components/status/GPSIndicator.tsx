@@ -21,7 +21,7 @@ const stateConfig: Record<GPSState, { label: string; color: string; animate: str
   },
   unavailable: {
     label: 'GPS Unavailable',
-    color: 'text-emergency-400',
+    color: 'text-[#FF3B30]',
     animate: '',
   },
 };

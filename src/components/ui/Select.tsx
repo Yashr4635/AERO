@@ -31,7 +31,7 @@ export function Select({
       {label && (
         <label
           htmlFor={selectId}
-          className="text-[13px] font-medium text-navy-300"
+          className="text-xs font-bold uppercase tracking-wider text-text-secondary mb-1"
         >
           {label}
         </label>
@@ -40,21 +40,17 @@ export function Select({
         <select
           id={selectId}
           className={`
-            w-full bg-navy-800 border rounded-[6px] px-3 py-2 text-sm text-navy-50
-            appearance-none cursor-pointer pr-10
-            transition-colors duration-150
-            focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-offset-navy-900
-            disabled:opacity-50 disabled:cursor-not-allowed
+            enterprise-input appearance-none cursor-pointer pr-10
             ${error
-              ? 'border-emergency-500 focus:ring-emergency-500'
-              : 'border-navy-600 hover:border-navy-500 focus:ring-info-500 focus:border-info-500'
+              ? 'border-status-error focus:ring-status-error/50'
+              : ''
             }
           `}
           aria-invalid={error ? 'true' : undefined}
           aria-describedby={error ? `${selectId}-error` : hint ? `${selectId}-hint` : undefined}
           {...props}
         >
-          <option value="" disabled className="text-navy-500">
+          <option value="" disabled className="text-text-secondary">
             {placeholder}
           </option>
           {options.map((opt) => (
@@ -64,7 +60,7 @@ export function Select({
           ))}
         </select>
         <svg
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-navy-400 pointer-events-none"
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary pointer-events-none"
           width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
           strokeWidth="2" strokeLinecap="round" aria-hidden="true"
         >
@@ -72,12 +68,12 @@ export function Select({
         </svg>
       </div>
       {error && (
-        <p id={`${selectId}-error`} className="text-[12px] text-emergency-400" role="alert">
+        <p id={`${selectId}-error`} className="text-[12px] text-status-error font-medium mt-1" role="alert">
           {error}
         </p>
       )}
       {hint && !error && (
-        <p id={`${selectId}-hint`} className="text-[12px] text-navy-400">
+        <p id={`${selectId}-hint`} className="text-[12px] text-text-secondary mt-1">
           {hint}
         </p>
       )}

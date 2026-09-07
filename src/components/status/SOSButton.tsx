@@ -41,12 +41,12 @@ export function SOSButton({
             flex items-center justify-center
             text-white font-bold text-lg tracking-wide
             transition-all duration-200
-            focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-emergency-400 focus-visible:ring-offset-2 focus-visible:ring-offset-navy-900
+            focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#FF3B30] focus-visible:ring-offset-2 focus-visible:ring-offset-bg-main
             ${disabled
-              ? 'bg-navy-600 cursor-not-allowed opacity-50'
+              ? 'bg-white/10 cursor-not-allowed opacity-50'
               : loading
-                ? 'bg-emergency-700 cursor-wait'
-                : 'bg-emergency-600 hover:bg-emergency-500 active:bg-emergency-700 cursor-pointer shadow-emergency hover:shadow-[0_0_30px_rgba(239,68,68,0.5)]'
+                ? 'bg-[#FF3B30]/80 cursor-wait'
+                : 'bg-[#FF3B30] hover:bg-[#FF3B30]/90 active:bg-[#FF3B30]/70 cursor-pointer shadow-[0_0_20px_rgba(255,59,48,0.4)] hover:shadow-[0_0_30px_rgba(255,59,48,0.5)]'
             }
           `}
           aria-label="Send Emergency SOS"
@@ -66,7 +66,7 @@ export function SOSButton({
           )}
         </button>
         {disabled && disabledReason && (
-          <p className="text-[11px] text-navy-400 text-center max-w-[180px]">
+          <p className="text-[11px] text-text-secondary text-center max-w-[180px]">
             {disabledReason}
           </p>
         )}
@@ -83,9 +83,9 @@ export function SOSButton({
         cancelLabel="Cancel"
       >
         {hospitalName && (
-          <div className="bg-navy-700/50 rounded-[6px] p-3 text-sm">
-            <span className="text-navy-400">Destination: </span>
-            <span className="text-navy-100 font-medium">{hospitalName}</span>
+          <div className="bg-bg-surface rounded-[6px] p-3 text-sm">
+            <span className="text-text-secondary">Destination: </span>
+            <span className="text-text-primary font-medium">{hospitalName}</span>
           </div>
         )}
       </Dialog>

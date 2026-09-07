@@ -108,9 +108,9 @@ export function AccountSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-dvh bg-navy-950 flex flex-col">
+      <div className="min-h-dvh bg-bg-main flex flex-col">
         <Header title="AERO OPERATOR PROFILE" subtitle="Manage your AERO operational identity and profile." />
-        <div className="flex-1 flex flex-col items-center justify-center text-navy-400 gap-4">
+        <div className="flex-1 flex flex-col items-center justify-center text-text-secondary gap-4">
           <div className="w-8 h-8 rounded-full border-2 border-cyan-600 border-t-transparent animate-spin"></div>
           <span className="text-sm font-bold tracking-widest uppercase">Loading Profile...</span>
         </div>
@@ -119,7 +119,7 @@ export function AccountSettingsPage() {
   }
 
   return (
-    <div className="min-h-dvh bg-navy-950 flex flex-col">
+    <div className="min-h-dvh bg-bg-main flex flex-col">
       <Header title="AERO OPERATOR PROFILE" subtitle="Manage your AERO operational identity and profile." />
       
       <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto w-full">
@@ -150,7 +150,7 @@ export function AccountSettingsPage() {
           
           {/* Profile Card Header (Left Column) */}
           <div className="lg:col-span-1">
-            <div className="bg-navy-900/60 border border-cyan-900/30 rounded-2xl p-6 flex flex-col items-center text-center sticky top-6 shadow-2xl backdrop-blur-sm">
+            <div className="bg-bg-surface/60 border border-cyan-900/30 rounded-2xl p-6 flex flex-col items-center text-center sticky top-6 shadow-2xl backdrop-blur-sm">
               <div className="w-24 h-24 bg-cyan-950 border border-cyan-700/50 rounded-full flex items-center justify-center text-3xl font-bold text-cyan-400 mb-4 shadow-[0_0_20px_rgba(8,145,178,0.2)]">
                 {profile?.full_name.substring(0, 2).toUpperCase() || 'OP'}
               </div>
@@ -159,9 +159,9 @@ export function AccountSettingsPage() {
                 {(profile?.role || 'Operator').replace('_', ' ').toUpperCase()}
               </p>
               
-              <div className="w-full bg-navy-950/80 rounded-xl p-4 border border-navy-800 text-left">
+              <div className="w-full bg-bg-main/80 rounded-xl p-4 border border-border-subtle text-left">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-navy-400 uppercase font-bold tracking-wider">Status</span>
+                  <span className="text-xs text-text-secondary uppercase font-bold tracking-wider">Status</span>
                   <span className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                     ACTIVE
@@ -175,8 +175,8 @@ export function AccountSettingsPage() {
           <div className="lg:col-span-2 space-y-6">
             <form onSubmit={handleSave} className="space-y-6">
               
-              <div className="bg-navy-900/40 border border-navy-800 rounded-2xl overflow-hidden shadow-xl">
-                <div className="bg-navy-900/80 px-6 py-4 border-b border-navy-800">
+              <div className="bg-bg-surface/40 border border-border-subtle rounded-2xl overflow-hidden shadow-xl">
+                <div className="bg-bg-surface/80 px-6 py-4 border-b border-border-subtle">
                   <h3 className="text-xs font-bold text-cyan-500 uppercase tracking-widest">Operator Identity</h3>
                 </div>
                 <div className="p-6 grid gap-5">
@@ -192,7 +192,7 @@ export function AccountSettingsPage() {
                       label="Operational Role"
                       value={(profile?.role || '').replace('_', ' ').toUpperCase()}
                       disabled
-                      className="bg-navy-950/50 opacity-80"
+                      className="bg-bg-main/50 opacity-80"
                     />
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -200,20 +200,20 @@ export function AccountSettingsPage() {
                       label="Email Address"
                       value={profile?.email || ''}
                       disabled
-                      className="bg-navy-950/50 opacity-80"
+                      className="bg-bg-main/50 opacity-80"
                     />
                     <Input
                       label="User ID"
                       value={profile?.id || ''}
                       disabled
-                      className="bg-navy-950/50 opacity-80 font-mono text-[11px]"
+                      className="bg-bg-main/50 opacity-80 font-mono text-[11px]"
                     />
                   </div>
                 </div>
               </div>
 
-              <div className="bg-navy-900/40 border border-navy-800 rounded-2xl overflow-hidden shadow-xl">
-                <div className="bg-navy-900/80 px-6 py-4 border-b border-navy-800">
+              <div className="bg-bg-surface/40 border border-border-subtle rounded-2xl overflow-hidden shadow-xl">
+                <div className="bg-bg-surface/80 px-6 py-4 border-b border-border-subtle">
                   <h3 className="text-xs font-bold text-cyan-500 uppercase tracking-widest">Account Information</h3>
                 </div>
                 <div className="p-6 grid gap-5">
@@ -222,11 +222,11 @@ export function AccountSettingsPage() {
                       label="Account Created"
                       value={profile?.created_at ? new Date(profile.created_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown'}
                       disabled
-                      className="bg-navy-950/50 opacity-80"
+                      className="bg-bg-main/50 opacity-80"
                     />
                     {/* Placeholder for future schema fields if added */}
                     <div className="flex flex-col justify-center">
-                      <p className="text-[10px] text-navy-500 font-medium uppercase tracking-wider mb-1">Email Verification</p>
+                      <p className="text-[10px] text-text-primary0 font-medium uppercase tracking-wider mb-1">Email Verification</p>
                       <p className="text-sm font-medium text-emerald-400">Verified via Supabase Auth</p>
                     </div>
                   </div>

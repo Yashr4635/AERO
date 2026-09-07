@@ -14,7 +14,7 @@ const stateConfig: Record<ConnectionState, { color: string; label: string; anima
     animate: '',
   },
   disconnected: {
-    color: 'bg-emergency-500',
+    color: 'bg-[#FF3B30]',
     label: 'Disconnected',
     animate: '',
   },
@@ -41,7 +41,7 @@ export function ConnectionIndicator({
       {showLabel && (
         <span className={`text-[12px] font-medium ${
           state === 'connected' ? 'text-success-400' :
-          state === 'disconnected' ? 'text-emergency-400' :
+          state === 'disconnected' ? 'text-[#FF3B30]' :
           'text-warning-400'
         }`}>
           {config.label}

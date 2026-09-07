@@ -50,7 +50,7 @@ export function Drawer({
         aria-modal="true"
         aria-label={title || 'Panel'}
         className={`
-          absolute bg-navy-800 border-navy-600/50 shadow-modal
+          absolute bg-bg-elevated border-border-subtle shadow-modal
           flex flex-col overflow-hidden ${slideAnimation}
           ${positionClasses}
           ${position === 'bottom' ? 'border-t' : 'border-l'}
@@ -60,16 +60,16 @@ export function Drawer({
         {/* Handle bar (bottom drawer) */}
         {position === 'bottom' && (
           <div className="flex justify-center pt-3 pb-1">
-            <div className="w-10 h-1 rounded-full bg-navy-600" />
+            <div className="w-10 h-1 rounded-full bg-border-strong" />
           </div>
         )}
         {/* Header */}
         {title && (
-          <div className="flex items-center justify-between px-5 py-3 border-b border-navy-600/50">
-            <h3 className="text-base font-semibold text-navy-50">{title}</h3>
+          <div className="flex items-center justify-between px-5 py-3 border-b border-border-subtle">
+            <h3 className="text-base font-semibold text-text-primary">{title}</h3>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-[6px] hover:bg-navy-700 transition-colors cursor-pointer"
+              className="p-1.5 rounded-[6px] hover:bg-white/5 transition-colors cursor-pointer"
               aria-label="Close panel"
             >
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">

@@ -68,20 +68,20 @@ export function Dialog({
         aria-describedby={description ? 'dialog-description' : undefined}
         tabIndex={-1}
         className={`
-          relative bg-navy-800 border rounded-[12px] shadow-modal
+          relative bg-bg-elevated border rounded-[12px] shadow-modal
           w-full max-w-md p-6 animate-slide-up
           focus:outline-none
-          ${variant === 'emergency' ? 'border-emergency-600/70' : 'border-navy-600'}
+          ${variant === 'emergency' ? 'border-[#FF3B30]/50' : 'border-border-subtle'}
         `}
       >
         <h2
           id="dialog-title"
-          className={`text-lg font-semibold ${variant === 'emergency' ? 'text-emergency-300' : 'text-navy-50'}`}
+          className={`text-lg font-semibold ${variant === 'emergency' ? 'text-[#FF3B30]' : 'text-text-primary'}`}
         >
           {title}
         </h2>
         {description && (
-          <p id="dialog-description" className="text-[13px] text-navy-300 mt-2">
+          <p id="dialog-description" className="text-[13px] text-text-secondary mt-2">
             {description}
           </p>
         )}

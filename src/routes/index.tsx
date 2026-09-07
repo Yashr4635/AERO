@@ -8,6 +8,9 @@ import { RegisterPage } from '../features/auth/pages/RegisterPage';
 import { AuthCallbackPage } from '../features/auth/pages/AuthCallbackPage';
 import { AccountSettingsPage } from '../features/settings/pages/AccountSettingsPage';
 import { SecurityPrivacyPage } from '../features/settings/pages/SecurityPrivacyPage';
+import { EmergencyProtocolPage } from '../features/public/pages/EmergencyProtocolPage';
+import { TermsOfServicePage } from '../features/public/pages/TermsOfServicePage';
+import { PrivacyPolicyPage } from '../features/public/pages/PrivacyPolicyPage';
 
 import { AmbulanceDashboard } from '../features/ambulance/pages/AmbulanceDashboard';
 import { PoliceDashboard } from '../features/police/pages/PoliceDashboard';
@@ -62,26 +65,7 @@ export function AppRoutes() {
   };
 
   const ProtectedRoute = ({ allowedRoles, children }: { allowedRoles?: string[]; children: React.ReactNode }) => {
-    if (loading) {
-      return (
-        <div className="min-h-screen bg-navy-950 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emergency-500"></div>
-        </div>
-      );
-    }
-    
-    if (!session) {
-      return <Navigate to="/login" replace />;
-    }
-
-    // Role-based access control checking user_metadata.role
-    const userRole = session.user.user_metadata?.role?.toUpperCase();
-    
-    if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
-      // User doesn't have the right role, redirect to their own dashboard or login
-      return <Navigate to="/" replace />;
-    }
-
+    // DEMO MODE: Bypass all authentication and role checks
     return (
       <>
         {children}
@@ -92,6 +76,11 @@ export function AppRoutes() {
 
   return (
     <Routes>
+      {/* Legal & Protocol */}
+      <Route path="/emergency-response-protocol" element={<EmergencyProtocolPage />} />
+      <Route path="/terms-of-service" element={<TermsOfServicePage />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicyPage />} />
+
       {/* Public Routes */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />

@@ -32,7 +32,7 @@ export function AdminAnalytics() {
 
         {!data ? (
           <div className="flex justify-center py-10">
-            <span className="text-navy-400">Loading analytics dataset...</span>
+            <span className="text-text-secondary">Loading analytics dataset...</span>
           </div>
         ) : (
           <div className="px-4 sm:px-6 space-y-6">
@@ -40,7 +40,7 @@ export function AdminAnalytics() {
             {/* KPI Highlight Strip */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <Card variant="compact">
-                <span className="text-[10px] font-bold text-navy-400 uppercase block">Average Transit Time</span>
+                <span className="text-[10px] font-bold text-text-secondary uppercase block">Average Transit Time</span>
                 <span className="text-2xl font-bold text-emerald-400 font-mono">
                   {data.overview.avgResponseTimeMinutes} mins
                 </span>
@@ -48,27 +48,27 @@ export function AdminAnalytics() {
               </Card>
 
               <Card variant="compact">
-                <span className="text-[10px] font-bold text-navy-400 uppercase block">Time Saved Per Trip</span>
+                <span className="text-[10px] font-bold text-text-secondary uppercase block">Time Saved Per Trip</span>
                 <span className="text-2xl font-bold text-cyan-400 font-mono">
                   {data.overview.timeSavedVsNormalTrafficMins} mins
                 </span>
-                <span className="text-[10px] text-navy-300 block mt-0.5">Golden Hour Preservation</span>
+                <span className="text-[10px] text-text-secondary block mt-0.5">Golden Hour Preservation</span>
               </Card>
 
               <Card variant="compact">
-                <span className="text-[10px] font-bold text-navy-400 uppercase block">Junction Clearance Rate</span>
+                <span className="text-[10px] font-bold text-text-secondary uppercase block">Junction Clearance Rate</span>
                 <span className="text-2xl font-bold text-purple-400 font-mono">
                   {data.overview.junctionClearanceSuccessRatePercent}%
                 </span>
-                <span className="text-[10px] text-navy-300 block mt-0.5">Police-Assisted Green Wave</span>
+                <span className="text-[10px] text-text-secondary block mt-0.5">Police-Assisted Green Wave</span>
               </Card>
 
               <Card variant="compact">
-                <span className="text-[10px] font-bold text-navy-400 uppercase block">Total Dispatches Today</span>
-                <span className="text-2xl font-bold text-emergency-400 font-mono">
+                <span className="text-[10px] font-bold text-text-secondary uppercase block">Total Dispatches Today</span>
+                <span className="text-2xl font-bold text-[#FF3B30] font-mono">
                   {data.overview.totalEmergenciesToday} Runs
                 </span>
-                <span className="text-[10px] text-navy-300 block mt-0.5">Across 4 Network Hospitals</span>
+                <span className="text-[10px] text-text-secondary block mt-0.5">Across 4 Network Hospitals</span>
               </Card>
             </div>
 
@@ -77,8 +77,8 @@ export function AdminAnalytics() {
               
               {/* Emergency Volume by Time of Day */}
               <Card>
-                <h3 className="text-sm font-bold text-navy-100 mb-1">Emergency Volume by Time of Day</h3>
-                <p className="text-xs text-navy-400 mb-4">Total calls vs Police green-wave assisted corridors</p>
+                <h3 className="text-sm font-bold text-text-primary mb-1">Emergency Volume by Time of Day</h3>
+                <p className="text-xs text-text-secondary mb-4">Total calls vs Police green-wave assisted corridors</p>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data.emergencyVolume} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
@@ -99,8 +99,8 @@ export function AdminAnalytics() {
 
               {/* Response Time Comparison vs Traffic Baseline */}
               <Card>
-                <h3 className="text-sm font-bold text-navy-100 mb-1">Transit Time Comparison (Minutes)</h3>
-                <p className="text-xs text-navy-400 mb-4">AERO Corridor vs Standard Urban Congestion</p>
+                <h3 className="text-sm font-bold text-text-primary mb-1">Transit Time Comparison (Minutes)</h3>
+                <p className="text-xs text-text-secondary mb-4">AERO Corridor vs Standard Urban Congestion</p>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={data.responseTimes} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
@@ -125,8 +125,8 @@ export function AdminAnalytics() {
               
               {/* Emergency Category Distribution */}
               <Card>
-                <h3 className="text-sm font-bold text-navy-100 mb-1">Emergency Category Distribution</h3>
-                <p className="text-xs text-navy-400 mb-4">Breakdown by emergency triage pathology</p>
+                <h3 className="text-sm font-bold text-text-primary mb-1">Emergency Category Distribution</h3>
+                <p className="text-xs text-text-secondary mb-4">Breakdown by emergency triage pathology</p>
                 <div className="h-64 flex items-center justify-center">
                   <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
@@ -152,7 +152,7 @@ export function AdminAnalytics() {
                   {data.categoryDistribution.map((entry, index) => (
                     <div key={index} className="flex items-center gap-1.5 text-xs">
                       <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.fill }} />
-                      <span className="text-navy-300">{entry.name} ({entry.value})</span>
+                      <span className="text-text-secondary">{entry.name} ({entry.value})</span>
                     </div>
                   ))}
                 </div>
@@ -160,8 +160,8 @@ export function AdminAnalytics() {
 
               {/* Junction Clearance Speeds */}
               <Card>
-                <h3 className="text-sm font-bold text-navy-100 mb-1">Junction Clearance Speed (Seconds)</h3>
-                <p className="text-xs text-navy-400 mb-4">Average police clearance time before ambulance arrival</p>
+                <h3 className="text-sm font-bold text-text-primary mb-1">Junction Clearance Speed (Seconds)</h3>
+                <p className="text-xs text-text-secondary mb-4">Average police clearance time before ambulance arrival</p>
                 <div className="h-64">
                   <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data.junctionClearanceMetrics} layout="vertical" margin={{ top: 5, right: 15, left: 40, bottom: 0 }}>

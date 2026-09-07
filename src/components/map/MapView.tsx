@@ -169,7 +169,7 @@ export function MapView({
   const [showLegend, setShowLegend] = useState(false);
 
   return (
-    <div className={`relative w-full h-full min-h-[300px] bg-navy-950 overflow-hidden ${className}`}>
+    <div className={`relative w-full h-full min-h-[300px] bg-bg-main overflow-hidden ${className}`}>
       <MapContainer
         center={center}
         zoom={zoom}
@@ -229,7 +229,7 @@ export function MapView({
           </div>
           <div className="space-y-2">
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full bg-emergency-500 flex items-center justify-center text-[10px]">🚑</div>
+              <div className="w-4 h-4 rounded-full bg-[#FF3B30] flex items-center justify-center text-[10px]">🚑</div>
               <span className="text-gray-700 font-medium">Emergency Ambulance (Live)</span>
             </div>
             <div className="flex items-center gap-2">

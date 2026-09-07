@@ -18,33 +18,37 @@ class RealtimeService {
     if (typeof window === 'undefined') return;
 
     // Clean up any existing channel with this name to prevent HMR crash
-    supabase.getChannels().forEach((ch: any) => {
-      if (ch.topic === 'realtime:public:emergency_incidents') {
-        supabase.removeChannel(ch);
-      }
-    });
-
-    // Listen to changes on the emergency_incidents table
-    supabase
-      .channel('public:emergency_incidents')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'emergency_incidents' },
-        (payload: any) => {
-          console.log('Realtime DB Event:', payload);
-          this.fetchAndBroadcastIncidents();
-        }
-      )
-      .subscribe((status: string) => {
-        if (status === 'SUBSCRIBED') {
-          this.connectionState = 'connected';
-          this.dispatchLocal('connection_change', 'connected');
-          this.fetchAndBroadcastIncidents();
-        } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
-          this.connectionState = 'disconnected';
-          this.dispatchLocal('connection_change', 'disconnected');
+    if (typeof supabase?.getChannels === 'function') {
+      supabase.getChannels().forEach((ch: any) => {
+        if (ch.topic === 'realtime:public:emergency_incidents') {
+          supabase.removeChannel(ch);
         }
       });
+    }
+
+    // Listen to changes on the emergency_incidents table
+    if (typeof supabase?.channel === 'function') {
+      supabase
+        .channel('public:emergency_incidents')
+        .on(
+          'postgres_changes',
+          { event: '*', schema: 'public', table: 'emergency_incidents' },
+          (payload: any) => {
+            console.log('Realtime DB Event:', payload);
+            this.fetchAndBroadcastIncidents();
+          }
+        )
+        .subscribe((status: string) => {
+          if (status === 'SUBSCRIBED') {
+            this.connectionState = 'connected';
+            this.dispatchLocal('connection_change', 'connected');
+            this.fetchAndBroadcastIncidents();
+          } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+            this.connectionState = 'disconnected';
+            this.dispatchLocal('connection_change', 'disconnected');
+          }
+        });
+    }
   }
 
   private async fetchAndBroadcastIncidents() {

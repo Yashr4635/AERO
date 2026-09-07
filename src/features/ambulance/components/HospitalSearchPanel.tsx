@@ -151,14 +151,14 @@ export function HospitalSearchPanel({
       <div className="absolute top-14 left-3 z-[500] w-[320px] max-w-[calc(100vw-1.5rem)] pointer-events-auto">
 
         {/* Search bar */}
-        <div className={`flex items-center gap-2 bg-white shadow-lg border rounded-2xl px-3 py-2 transition-all ${open ? 'border-blue-400 ring-2 ring-blue-200' : 'border-gray-200'}`}>
+        <div className={`flex items-center gap-2 bg-bg-surface shadow-lg border rounded-2xl px-3 py-2 transition-all ${open ? 'border-[#35C7FF] ring-2 ring-[#35C7FF]/20' : 'border-border-subtle'}`}>
           {loading ? (
-            <svg className="animate-spin w-4 h-4 text-blue-500 shrink-0" viewBox="0 0 24 24" fill="none">
+            <svg className="animate-spin w-4 h-4 text-[#35C7FF] shrink-0" viewBox="0 0 24 24" fill="none">
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
             </svg>
           ) : (
-            <svg className="w-4 h-4 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 text-text-secondary shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"/>
             </svg>
           )}
@@ -169,12 +169,12 @@ export function HospitalSearchPanel({
             onChange={e => setQuery(e.target.value)}
             onFocus={() => setOpen(true)}
             placeholder={`Search hospitals within ${maxRadiusKm} km…`}
-            className="flex-1 text-xs text-gray-800 placeholder-gray-400 bg-transparent outline-none"
+            className="flex-1 text-xs text-white placeholder-text-secondary bg-transparent outline-none"
           />
           {query && (
             <button
               onClick={() => { setQuery(''); inputRef.current?.focus(); }}
-              className="text-gray-400 hover:text-gray-600 cursor-pointer shrink-0"
+              className="text-text-secondary hover:text-white cursor-pointer shrink-0"
             >
               <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd"/>
@@ -184,7 +184,7 @@ export function HospitalSearchPanel({
           {open && (
             <button
               onClick={() => setOpen(false)}
-              className="text-gray-400 hover:text-gray-600 cursor-pointer shrink-0 text-[10px] font-medium"
+              className="text-text-secondary hover:text-white cursor-pointer shrink-0 text-[10px] font-medium"
             >
               ESC
             </button>
@@ -193,14 +193,14 @@ export function HospitalSearchPanel({
 
         {/* Results dropdown */}
         {open && (
-          <div className="mt-1.5 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden max-h-[340px] flex flex-col">
+          <div className="mt-1.5 bg-bg-surface rounded-2xl shadow-xl border border-border-subtle overflow-hidden max-h-[340px] flex flex-col">
             {/* Header */}
-            <div className="px-3 py-2 border-b border-gray-100 flex items-center justify-between bg-gray-50/80">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">
+            <div className="px-3 py-2 border-b border-border-subtle flex items-center justify-between bg-bg-elevated">
+              <span className="telemetry-label">
                 {loading ? 'Searching live map data…' : `${hospitals.length} hospitals within ${maxRadiusKm} km`}
               </span>
               {!loading && hospitals.length > 0 && (
-                <span className="text-[10px] text-blue-500 font-medium">📡 Live Map Data</span>
+                <span className="text-[10px] text-[#35C7FF] font-medium">📡 Live Map Data</span>
               )}
             </div>
 
@@ -209,32 +209,32 @@ export function HospitalSearchPanel({
               {hospitals.length === 0 && !loading && (
                 <div className="flex flex-col items-center justify-center py-8 text-center px-4">
                   <span className="text-2xl mb-2">🏥</span>
-                  <p className="text-xs text-gray-500 font-medium">No hospitals found nearby</p>
-                  <p className="text-[10px] text-gray-400 mt-1">Try a different search or extend the radius</p>
+                  <p className="text-xs text-text-secondary font-medium">No hospitals found nearby</p>
+                  <p className="text-[10px] text-text-secondary mt-1">Try a different search or extend the radius</p>
                 </div>
               )}
               {hospitals.map((h, i) => {
                 const isSelected = h.id === selectedHospitalId;
                 const distKm = h.distanceMeters / 1000;
-                const urgencyColor = distKm < 3 ? 'text-emerald-600' : distKm < 8 ? 'text-amber-600' : 'text-blue-600';
+                const urgencyColor = distKm < 3 ? 'text-[#20D67A]' : distKm < 8 ? 'text-[#FFB020]' : 'text-[#35C7FF]';
                 return (
-                  <div key={h.id} className="flex flex-col border-b border-gray-50 last:border-0">
+                  <div key={h.id} className="flex flex-col border-b border-border-subtle last:border-0">
                     <button
                       onClick={() => handleSelect(h)}
-                      className={`w-full text-left px-3 py-2.5 flex items-start gap-2.5 hover:bg-blue-50 transition-colors cursor-pointer ${
-                        isSelected ? 'bg-emerald-50 border-emerald-100' : ''
+                      className={`w-full text-left px-3 py-2.5 flex items-start gap-2.5 hover:bg-bg-elevated transition-colors cursor-pointer ${
+                        isSelected ? 'bg-[#35C7FF]/10' : ''
                       }`}
                     >
                       {/* Rank badge */}
                       <div className={`mt-0.5 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
-                        i === 0 ? 'bg-emerald-500 text-white' : 'bg-gray-100 text-gray-500'
+                        i === 0 ? 'bg-[#20D67A] text-bg-main' : 'bg-bg-elevated border border-border-subtle text-text-secondary'
                       }`}>
                         {i === 0 ? '★' : i + 1}
                       </div>
 
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-1">
-                          <p className={`text-xs font-bold leading-tight truncate ${isSelected ? 'text-emerald-700' : 'text-gray-800'}`}>
+                          <p className={`text-xs font-bold leading-tight truncate ${isSelected ? 'text-[#35C7FF]' : 'text-white'}`}>
                             {h.name}
                           </p>
                           <span className={`text-[11px] font-mono font-bold shrink-0 ${urgencyColor}`}>
@@ -242,27 +242,27 @@ export function HospitalSearchPanel({
                           </span>
                         </div>
                         {h.address && (
-                          <p className="text-[10px] text-gray-400 mt-0.5 leading-tight truncate">{h.address}</p>
+                          <p className="text-[10px] text-text-secondary mt-0.5 leading-tight truncate">{h.address}</p>
                         )}
                         {h.businessStatus && (
-                          <p className={`text-[10px] mt-0.5 font-bold ${h.businessStatus === 'OPERATIONAL' ? 'text-emerald-500' : 'text-amber-500'}`}>
+                          <p className={`text-[10px] mt-0.5 font-bold ${h.businessStatus === 'OPERATIONAL' ? 'text-[#20D67A]' : 'text-[#FFB020]'}`}>
                             {h.businessStatus.replace('_', ' ')}
                           </p>
                         )}
                         {h.phone && (
-                          <p className="text-[10px] text-blue-500 mt-0.5 font-mono">{h.phone}</p>
+                          <p className="text-[10px] text-[#35C7FF] mt-0.5 font-mono">{h.phone}</p>
                         )}
                       </div>
 
                       {isSelected && (
-                        <svg className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
+                        <svg className="w-4 h-4 text-[#35C7FF] shrink-0 mt-0.5" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
                         </svg>
                       )}
                     </button>
                     {h.googleMapsUri && (
                       <div className="px-3 pb-2 pt-1 flex justify-end">
-                         <a href={h.googleMapsUri} target="_blank" rel="noreferrer" className="text-[10px] font-bold text-blue-500 hover:text-blue-600 underline">
+                         <a href={h.googleMapsUri} target="_blank" rel="noreferrer" className="text-[10px] font-bold text-[#35C7FF] hover:text-[#35C7FF]/80 underline">
                            [ OPEN IN GOOGLE MAPS ]
                          </a>
                       </div>

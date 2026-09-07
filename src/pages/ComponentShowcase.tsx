@@ -23,7 +23,7 @@ import type { AvailabilityStatus, EmergencyStatus, ConnectionState } from '../ty
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mb-10">
-      <h2 className="text-lg font-semibold text-navy-100 mb-4 pb-2 border-b border-navy-600/50">
+      <h2 className="text-lg font-semibold text-text-primary mb-4 pb-2 border-b border-border-subtle">
         {title}
       </h2>
       {children}
@@ -34,7 +34,7 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 function SubSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-6">
-      <h3 className="text-[13px] font-semibold text-navy-400 uppercase tracking-[0.05em] mb-3">{title}</h3>
+      <h3 className="text-[13px] font-semibold text-text-secondary uppercase tracking-[0.05em] mb-3">{title}</h3>
       {children}
     </div>
   );
@@ -48,13 +48,13 @@ export function ComponentShowcase() {
   const [availability, setAvailability] = useState<AvailabilityStatus>('AVAILABLE');
 
   return (
-    <div className="min-h-dvh bg-navy-950">
+    <div className="min-h-dvh bg-bg-main">
       {/* Header */}
-      <div className="bg-navy-900 border-b border-navy-600/50 px-6 py-5">
-        <h1 className="text-xl font-bold text-navy-50">
+      <div className="bg-bg-surface border-b border-border-subtle px-6 py-5">
+        <h1 className="text-xl font-bold text-text-primary">
           LIFE<span className="text-info-400">LANE</span> — Design System
         </h1>
-        <p className="text-sm text-navy-400 mt-1">Component showcase &amp; living reference</p>
+        <p className="text-sm text-text-secondary mt-1">Component showcase &amp; living reference</p>
       </div>
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
@@ -191,15 +191,15 @@ export function ComponentShowcase() {
           <div className="grid gap-3 sm:grid-cols-2">
             <Card>
               <CardHeader title="Default Card" subtitle="Standard card component" />
-              <p className="text-sm text-navy-300">Card content goes here. Used for grouping related information.</p>
+              <p className="text-sm text-text-secondary">Card content goes here. Used for grouping related information.</p>
             </Card>
             <Card variant="interactive" onClick={() => addToast({ variant: 'info', message: 'Card clicked!' })}>
               <CardHeader title="Interactive Card" subtitle="Click me" />
-              <p className="text-sm text-navy-300">Hover and click interaction.</p>
+              <p className="text-sm text-text-secondary">Hover and click interaction.</p>
             </Card>
             <Card variant="compact">
               <div className="flex items-center justify-between">
-                <span className="text-sm text-navy-200">Compact Card</span>
+                <span className="text-sm text-text-secondary">Compact Card</span>
                 <Badge variant="success" dot size="sm">Online</Badge>
               </div>
             </Card>
@@ -227,17 +227,17 @@ export function ComponentShowcase() {
           <Button variant="outline" size="sm" onClick={() => setDrawerOpen(true)}>Open Bottom Drawer</Button>
           <Drawer open={drawerOpen} onClose={() => setDrawerOpen(false)} title="Emergency Details">
             <div className="space-y-3">
-              <p className="text-sm text-navy-300">Drawer content — bottom sheet on mobile, side panel on desktop.</p>
+              <p className="text-sm text-text-secondary">Drawer content — bottom sheet on mobile, side panel on desktop.</p>
               <Card variant="compact">
                 <div className="flex justify-between">
-                  <span className="text-sm text-navy-200">Ambulance Unit 01</span>
+                  <span className="text-sm text-text-secondary">Ambulance Unit 01</span>
                   <StatusBadge status="ACTIVE" />
                 </div>
               </Card>
               <Card variant="compact">
                 <div className="flex justify-between">
-                  <span className="text-sm text-navy-200">ETA</span>
-                  <span className="text-sm font-semibold text-navy-100">7 min</span>
+                  <span className="text-sm text-text-secondary">ETA</span>
+                  <span className="text-sm font-semibold text-text-primary">7 min</span>
                 </div>
               </Card>
             </div>
@@ -247,9 +247,9 @@ export function ComponentShowcase() {
         {/* ═══════ TABS ═══════ */}
         <Section title="Tabs">
           <Tabs tabs={[
-            { id: 'active', label: 'Active', badge: 2, content: <p className="text-sm text-navy-300">Active emergencies content.</p> },
-            { id: 'pending', label: 'Pending', badge: 1, content: <p className="text-sm text-navy-300">Pending emergencies content.</p> },
-            { id: 'completed', label: 'Completed', content: <p className="text-sm text-navy-300">Completed emergencies content.</p> },
+            { id: 'active', label: 'Active', badge: 2, content: <p className="text-sm text-text-secondary">Active emergencies content.</p> },
+            { id: 'pending', label: 'Pending', badge: 1, content: <p className="text-sm text-text-secondary">Pending emergencies content.</p> },
+            { id: 'completed', label: 'Completed', content: <p className="text-sm text-text-secondary">Completed emergencies content.</p> },
             { id: 'disabled', label: 'Disabled', disabled: true, content: <p>Disabled tab</p> },
           ]} />
         </Section>
@@ -341,15 +341,15 @@ export function ComponentShowcase() {
           <div className="flex flex-wrap gap-8 items-start">
             <div className="text-center">
               <SOSButton onConfirm={() => addToast({ variant: 'success', message: 'SOS Sent!' })} hospitalName="City General Hospital" />
-              <p className="text-[11px] text-navy-500 mt-2">Enabled</p>
+              <p className="text-[11px] text-text-primary0 mt-2">Enabled</p>
             </div>
             <div className="text-center">
               <SOSButton onConfirm={() => {}} disabled disabledReason="Select a hospital first" />
-              <p className="text-[11px] text-navy-500 mt-2">Disabled</p>
+              <p className="text-[11px] text-text-primary0 mt-2">Disabled</p>
             </div>
             <div className="text-center">
               <SOSButton onConfirm={() => {}} loading />
-              <p className="text-[11px] text-navy-500 mt-2">Loading</p>
+              <p className="text-[11px] text-text-primary0 mt-2">Loading</p>
             </div>
           </div>
         </Section>
@@ -383,7 +383,7 @@ export function ComponentShowcase() {
         <Section title="Color Palette">
           <SubSection title="Navy">
             <div className="flex gap-1">
-              {['bg-navy-950','bg-navy-900','bg-navy-800','bg-navy-700','bg-navy-600','bg-navy-500','bg-navy-400','bg-navy-300','bg-navy-200','bg-navy-100','bg-navy-50'].map((c) => (
+              {['bg-bg-main','bg-bg-surface','bg-bg-elevated','bg-white/5','bg-white/10','bg-white/15','bg-white/20','bg-white/30','bg-white/40','bg-white/60','bg-white/80'].map((c) => (
                 <Tooltip key={c} content={c}><div className={`w-10 h-10 rounded ${c}`} /></Tooltip>
               ))}
             </div>
@@ -391,13 +391,13 @@ export function ComponentShowcase() {
           <SubSection title="Semantic">
             <div className="space-y-2">
               {[
-                { name: 'Emergency', colors: ['bg-emergency-900','bg-emergency-700','bg-emergency-600','bg-emergency-500','bg-emergency-400','bg-emergency-300'] },
+                { name: 'Emergency', colors: ['bg-[#FF3B30]/20','bg-[#FF3B30]/80','bg-[#FF3B30]','bg-[#FF3B30]','bg-[#FF3B30]/60','bg-[#FF3B30]/40'] },
                 { name: 'Warning', colors: ['bg-warning-900','bg-warning-700','bg-warning-600','bg-warning-500','bg-warning-400','bg-warning-300'] },
                 { name: 'Success', colors: ['bg-success-900','bg-success-700','bg-success-600','bg-success-500','bg-success-400','bg-success-300'] },
                 { name: 'Info', colors: ['bg-info-900','bg-info-700','bg-info-600','bg-info-500','bg-info-400','bg-info-300'] },
               ].map((group) => (
                 <div key={group.name} className="flex items-center gap-3">
-                  <span className="text-[12px] text-navy-400 w-20">{group.name}</span>
+                  <span className="text-[12px] text-text-secondary w-20">{group.name}</span>
                   <div className="flex gap-1">
                     {group.colors.map((c) => (
                       <Tooltip key={c} content={c}><div className={`w-8 h-8 rounded ${c}`} /></Tooltip>
@@ -412,14 +412,14 @@ export function ComponentShowcase() {
         {/* ═══════ TYPOGRAPHY ═══════ */}
         <Section title="Typography">
           <div className="space-y-3">
-            <p className="text-[30px] font-bold leading-[1.2] text-navy-50">Display — 30px Bold</p>
-            <p className="text-2xl font-semibold text-navy-50">Heading LG — 24px Semibold</p>
-            <p className="text-xl font-semibold text-navy-50">Heading — 20px Semibold</p>
-            <p className="text-base font-semibold text-navy-50">Heading SM — 16px Semibold</p>
-            <p className="text-sm text-navy-200">Body — 14px Regular</p>
-            <p className="text-[13px] text-navy-300">Body SM — 13px Regular</p>
-            <p className="text-[12px] font-medium text-navy-400">Caption — 12px Medium</p>
-            <p className="text-[11px] font-medium text-navy-500">Caption SM — 11px Medium</p>
+            <p className="text-[30px] font-bold leading-[1.2] text-text-primary">Display — 30px Bold</p>
+            <p className="text-2xl font-semibold text-text-primary">Heading LG — 24px Semibold</p>
+            <p className="text-xl font-semibold text-text-primary">Heading — 20px Semibold</p>
+            <p className="text-base font-semibold text-text-primary">Heading SM — 16px Semibold</p>
+            <p className="text-sm text-text-secondary">Body — 14px Regular</p>
+            <p className="text-[13px] text-text-secondary">Body SM — 13px Regular</p>
+            <p className="text-[12px] font-medium text-text-secondary">Caption — 12px Medium</p>
+            <p className="text-[11px] font-medium text-text-primary0">Caption SM — 11px Medium</p>
             <p className="text-[13px] font-medium font-mono text-info-400">Monospace — 13px (coordinates, IDs)</p>
           </div>
         </Section>
